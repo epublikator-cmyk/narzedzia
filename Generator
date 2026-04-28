@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Generator galerii</title>
+<style>
+  :root {
+    --bg: #f7f5f0;
+    --surface: #ffffff;
+    --border: #e0dbd2;
+    --text: #1a1916;
+    --muted: #888580;
+    --accent: #3d5a3e;
+    --accent-light: #eaf0ea;
+    --mono: 'Courier New', Courier, monospace;
+    --sans: Georgia, 'Times New Roman', serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 3rem 1rem;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 2.5rem;
+    width: 100%;
+    max-width: 600px;
+  }
+
+  h1 {
+    font-size: 1.1rem;
+    font-weight: normal;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 2rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 1rem;
+  }
+
+  .field {
+    margin-bottom: 1.25rem;
+  }
+
+  label {
+    display: block;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.4rem;
+    font-family: var(--mono);
+  }
+
+  input[type="text"],
+  input[type="number"] {
+    width: 100%;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: 1px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  input:focus {
+    border-color: var(--accent);
+    background: #fff;
+  }
+
+  .row {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .row .field { flex: 1; }
+
+  .btn {
+    display: block;
+    width: 100%;
+    padding: 0.75rem;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 1px;
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    margin-top: 1.5rem;
+    transition: opacity 0.15s;
+  }
+
+  .btn:hover { opacity: 0.85; }
+
+  .output {
+    display: none;
+    margin-top: 2rem;
+    border-top: 1px solid var(--border);
+    padding-top: 1.5rem;
+  }
+
+  .output label {
+    margin-bottom: 0.5rem;
+    color: var(--accent);
+  }
+
+  textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: 1px;
+    background: var(--accent-light);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    line-height: 1.6;
+    resize: none;
+    outline: none;
+    cursor: text;
+  }
+
+  textarea:focus { border-color: var(--accent); }
+
+  .copy-btn {
+    display: block;
+    width: 100%;
+    padding: 0.5rem;
+    background: transparent;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    border-radius: 1px;
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    margin-top: 0.5rem;
+    transition: background 0.15s, color 0.15s;
+  }
+
+  .copy-btn:hover {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  .preview {
+    display: none;
+    margin-top: 1.5rem;
+  }
+
+  .preview label {
+    display: block;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+    font-family: var(--mono);
+  }
+
+  #preview-gallery {
+    display: flex;
+    gap: 6px;
+  }
+
+  #preview-gallery a {
+    flex: 1;
+    min-width: 0;
+  }
+
+  #preview-gallery img {
+    width: 100%;
+    display: block;
+    object-fit: cover;
+  }
+
+  .note {
+    font-size: 0.78rem;
+    color: var(--muted);
+    font-family: var(--mono);
+    margin-top: 0.4rem;
+    line-height: 1.5;
+  }
+
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 1.5rem 0;
+  }
+
+  .count-row {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .count-btn {
+    padding: 0.35rem 0.9rem;
+    border: 1px solid var(--border);
+    border-radius: 1px;
+    background: var(--bg);
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s;
+  }
+
+  .count-btn.active {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-light);
+  }
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>Generator galerii</h1>
+
+  <div class="field">
+    <label>Liczba zdjęć</label>
+    <div class="count-row">
+      <button class="count-btn" onclick="setCount(2)">2</button>
+      <button class="count-btn active" onclick="setCount(3)">3</button>
+      <button class="count-btn" onclick="setCount(4)">4</button>
+    </div>
+  </div>
+
+  <div id="url-fields"></div>
+
+  <div class="row">
+    <div class="field">
+      <label>Wysokość (px)</label>
+      <input type="number" id="height" value="200" min="50" max="600">
+    </div>
+    <div class="field">
+      <label>Odstęp (px)</label>
+      <input type="number" id="gap" value="6" min="0" max="40">
+    </div>
+  </div>
+
+  <button class="btn" onclick="generate()">Generuj kod</button>
+
+  <div class="output" id="output">
+    <label>Kod HTML</label>
+    <textarea id="code" readonly rows="4" onclick="this.select()"></textarea>
+    <button class="copy-btn" onclick="copyCode()">Kopiuj</button>
+    <div class="preview" id="preview-box">
+      <hr class="divider">
+      <label>Podgląd</label>
+      <div id="preview-gallery"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+var count = 3;
+
+function setCount(n) {
+  count = n;
+  document.querySelectorAll('.count-btn').forEach(function(b) {
+    b.classList.toggle('active', parseInt(b.textContent) === n);
+  });
+  renderFields();
+}
+
+function renderFields() {
+  var container = document.getElementById('url-fields');
+  container.innerHTML = '';
+  for (var i = 1; i <= count; i++) {
+    var div = document.createElement('div');
+    div.className = 'field';
+    div.innerHTML = '<label>URL zdjęcia ' + i + '</label>'
+      + '<input type="text" id="u' + i + '" placeholder="https://...">';
+    container.appendChild(div);
+  }
+}
+
+function generate() {
+  var urls = [];
+  for (var i = 1; i <= count; i++) {
+    var v = document.getElementById('u' + i).value.trim();
+    if (!v) { alert('Uzupełnij URL zdjęcia ' + i + '.'); return; }
+    urls.push(v);
+  }
+  var h = document.getElementById('height').value || '200';
+  var g = document.getElementById('gap').value || '6';
+  var s = 'style="width:100%;height:' + h + 'px;object-fit:cover;display:block;"';
+
+  var parts = urls.map(function(u) {
+    return '<a href="' + u + '"><img src="' + u + '" ' + s + '></a>';
+  });
+
+  var code = '<div style="display:flex;gap:' + g + 'px;">' + parts.join('') + '</div>';
+  document.getElementById('code').value = code;
+  document.getElementById('output').style.display = 'block';
+
+  var pg = document.getElementById('preview-gallery');
+  pg.style.gap = g + 'px';
+  pg.innerHTML = urls.map(function(u) {
+    return '<a href="' + u + '" target="_blank"><img src="' + u + '" style="width:100%;height:' + h + 'px;object-fit:cover;display:block;"></a>';
+  }).join('');
+  document.getElementById('preview-box').style.display = 'block';
+}
+
+function copyCode() {
+  var ta = document.getElementById('code');
+  ta.select();
+  try {
+    document.execCommand('copy');
+    var btn = document.querySelector('.copy-btn');
+    var orig = btn.textContent;
+    btn.textContent = 'Skopiowano';
+    setTimeout(function() { btn.textContent = orig; }, 1500);
+  } catch(e) {}
+}
+
+renderFields();
+</script>
+</body>
+</html>
