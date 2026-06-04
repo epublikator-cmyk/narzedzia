@@ -3,58 +3,49 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Generator Gazety — Bear Blog</title>
+<title>Generator Gazety</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Playfair+Display:wght@700;900&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box}
 body{margin:0;padding:16px;background:#ede8de;font-family:system-ui,sans-serif;color:#1c1c1c}
 h1,h2,p{margin:0}
 input,textarea,button{font-family:inherit}
+input:focus,textarea:focus{outline:2px solid #1c1c1c;outline-offset:1px}
 
-/* --- top bar --- */
 #topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px}
-#topbar h1{font-size:1rem;font-weight:700;color:#333}
-.bar-right{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-
-/* --- tabs --- */
+#topbar h1{font-size:1rem;font-weight:700;color:#333;display:flex;align-items:center;gap:8px}
+#save-ind{font-size:.7rem;font-weight:400;color:#2e7d32;transition:opacity .5s;opacity:0}
+.bar-right{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
 .tabs{display:flex;gap:3px;background:#d9d3c7;border-radius:8px;padding:3px}
 .tab-btn{padding:6px 14px;border:none;border-radius:6px;cursor:pointer;font-size:.82rem;font-weight:400;background:transparent;color:#555}
 .tab-btn.active{background:#1c1c1c;color:#fff;font-weight:600}
-
-/* --- copy button --- */
 #copy-btn{padding:8px 18px;background:#1c1c1c;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:.85rem;font-weight:600}
 #copy-btn.ok{background:#2e7d32}
+#reset-btn{padding:8px 10px;background:none;color:#aaa;border:1px solid #ccc;border-radius:6px;cursor:pointer;font-size:.8rem}
 
-/* --- panels --- */
-.panel{display:none}
-.panel.active{display:block}
+.panel{display:none}.panel.active{display:block}
 
-/* --- newspaper preview --- */
+/* newspaper */
 #newspaper{background:#f4efe0;color:#1c1c1c;font-family:'IM Fell English',Georgia,serif;max-width:680px;margin:0 auto;padding:28px;border:1px solid #ccc;box-shadow:4px 4px 18px rgba(0,0,0,.1)}
-#np-mast{font-family:'Cinzel',Georgia,serif;font-size:clamp(2rem,5vw,3.6rem);text-align:center;letter-spacing:2px;line-height:1.05;margin-bottom:6px}
+#np-mast{font-family:'Cinzel',Georgia,serif;font-size:clamp(1.8rem,5vw,3rem);text-align:center;letter-spacing:2px;line-height:1.1;margin-bottom:6px}
 #np-motto{text-align:center;font-style:italic;font-size:.82rem;color:#555;margin-bottom:10px}
 #np-meta{display:flex;justify-content:space-between;border-top:3px solid #1c1c1c;border-bottom:1px solid #1c1c1c;padding:4px 0;margin-bottom:20px;font-size:.68rem;letter-spacing:1.5px;text-transform:uppercase}
 #np-cols{display:grid;grid-template-columns:1fr 1fr}
-.np-col{padding:0 18px}
-.np-col:first-child{border-right:1px solid #aaa;padding-left:0}
-.np-col:last-child{padding-right:0}
-.np-art{margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid #ccc}
-.np-art:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.np-col{padding:0 18px}.np-col:first-child{border-right:1px solid #aaa;padding-left:0}.np-col:last-child{padding-right:0}
+.np-art{margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid #ccc}.np-art:last-child{border:none;margin:0;padding:0}
 .np-dzial{font-size:.58rem;letter-spacing:2.5px;text-transform:uppercase;color:#888;margin-bottom:3px}
-.np-head{font-family:'Playfair Display',Georgia,serif;font-weight:700;font-size:1.15rem;line-height:1.2;margin:0 0 6px}
+.np-head{font-family:'Playfair Display',Georgia,serif;font-weight:700;font-size:1.1rem;line-height:1.2;margin:0 0 6px}
 .np-body{font-size:.83rem;line-height:1.6;margin:0}
 .np-link{display:inline-block;margin-top:5px;font-size:.68rem;letter-spacing:1px;text-transform:uppercase;color:#666;text-decoration:none;border-bottom:1px solid #999}
 
-/* --- editor --- */
+/* editor */
 .card{background:#fff;border:1px solid #ddd8cc;border-radius:8px;padding:16px;margin-bottom:12px}
 .sec-h{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#888;padding-bottom:8px;border-bottom:2px solid #1c1c1c;margin-bottom:12px}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .fld{margin-bottom:8px}
-label.lbl{display:block;font-size:.65rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:#999;margin-bottom:3px}
-input.inp{width:100%;padding:7px 9px;border:1px solid #ddd;border-radius:5px;font-size:.88rem;background:#faf9f7}
-input.inp:focus{outline:2px solid #1c1c1c;outline-offset:1px}
-textarea.ta{width:100%;padding:7px 9px;border:1px solid #ddd;border-radius:5px;font-size:.83rem;line-height:1.55;min-height:64px;resize:vertical;background:#faf9f7;font-family:inherit}
-textarea.ta:focus{outline:2px solid #1c1c1c;outline-offset:1px}
+.lbl{display:block;font-size:.65rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:#999;margin-bottom:3px}
+.inp{width:100%;padding:7px 9px;border:1px solid #ddd;border-radius:5px;font-size:.88rem;background:#faf9f7}
+.ta{width:100%;padding:7px 9px;border:1px solid #ddd;border-radius:5px;font-size:.83rem;line-height:1.55;min-height:64px;resize:vertical;background:#faf9f7;font-family:inherit}
 .cols-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .art-card{background:#faf8f4;border:1px solid #e8e2d8;border-radius:6px;padding:11px;margin-bottom:8px}
 .art-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
@@ -64,8 +55,7 @@ textarea.ta:focus{outline:2px solid #1c1c1c;outline-offset:1px}
 .add-btn{width:100%;padding:8px;border:2px dashed #ccc;background:none;border-radius:6px;color:#aaa;cursor:pointer;font-size:.82rem}
 .add-btn:hover{border-color:#888;color:#555}
 
-/* --- html tab --- */
-#html-out{width:100%;height:300px;font-family:monospace;font-size:.75rem;padding:12px;border:1px solid #ddd;border-radius:6px;resize:vertical;background:#f8f7f4;color:#333}
+#html-out{width:100%;height:280px;font-family:monospace;font-size:.75rem;padding:12px;border:1px solid #ddd;border-radius:6px;resize:vertical;background:#f8f7f4;color:#333}
 .note{font-size:.82rem;color:#666;margin-bottom:10px;line-height:1.6}
 
 @media(max-width:600px){
@@ -78,7 +68,7 @@ textarea.ta:focus{outline:2px solid #1c1c1c;outline-offset:1px}
 <body>
 
 <div id="topbar">
-  <h1>Generator gazety — Bear Blog <span id="save-indicator" style="font-size:.7rem;font-weight:400;color:#2e7d32;margin-left:8px;transition:opacity .4s;opacity:0"></span></h1>
+  <h1>Generator gazety <span id="save-ind"></span></h1>
   <div class="bar-right">
     <div class="tabs">
       <button class="tab-btn active" data-tab="podglad">Podglad</button>
@@ -86,19 +76,15 @@ textarea.ta:focus{outline:2px solid #1c1c1c;outline-offset:1px}
       <button class="tab-btn" data-tab="html">HTML</button>
     </div>
     <button id="copy-btn">Kopiuj HTML</button>
-    <button id="reset-btn" style="padding:8px 12px;background:none;color:#aaa;border:1px solid #ccc;border-radius:6px;cursor:pointer;font-size:.8rem">Reset</button>
+    <button id="reset-btn" title="Wyczysc i zacznij od nowa">Reset</button>
   </div>
 </div>
 
-<!-- PODGLAD -->
 <div class="panel active" id="panel-podglad">
   <div id="newspaper">
     <div id="np-mast"></div>
     <div id="np-motto"></div>
-    <div id="np-meta">
-      <span id="np-date"></span>
-      <span id="np-edition"></span>
-    </div>
+    <div id="np-meta"><span id="np-date"></span><span id="np-edition"></span></div>
     <div id="np-cols">
       <div class="np-col" id="np-col-0"></div>
       <div class="np-col" id="np-col-1"></div>
@@ -106,290 +92,286 @@ textarea.ta:focus{outline:2px solid #1c1c1c;outline-offset:1px}
   </div>
 </div>
 
-<!-- EDYTOR -->
 <div class="panel" id="panel-edytor">
   <div class="card">
     <div class="sec-h">Naglowek gazety</div>
     <div class="grid2">
-      <div class="fld"><label class="lbl">Tytul (masthead)</label><input class="inp" id="f-masthead" value="PTASZARNIA"></div>
-      <div class="fld"><label class="lbl">Motto</label><input class="inp" id="f-motto" value="Notatki z marginesu swiata"></div>
+      <div class="fld"><label class="lbl">Tytul</label><input class="inp" id="f-masthead"></div>
+      <div class="fld"><label class="lbl">Motto</label><input class="inp" id="f-motto"></div>
       <div class="fld"><label class="lbl">Data</label><input class="inp" id="f-date"></div>
-      <div class="fld"><label class="lbl">Numer wydania</label><input class="inp" id="f-edition" value="Nr 1"></div>
+      <div class="fld"><label class="lbl">Numer wydania</label><input class="inp" id="f-edition"></div>
     </div>
   </div>
   <div class="cols-grid">
-    <div>
-      <div class="sec-h">Kolumna lewa</div>
-      <div id="col-0-articles"></div>
-      <button class="add-btn" data-col="0">+ Dodaj artykul</button>
-    </div>
-    <div>
-      <div class="sec-h">Kolumna prawa</div>
-      <div id="col-1-articles"></div>
-      <button class="add-btn" data-col="1">+ Dodaj artykul</button>
-    </div>
+    <div><div class="sec-h">Kolumna lewa</div><div id="col-0-articles"></div><button class="add-btn" data-col="0">+ Dodaj artykul</button></div>
+    <div><div class="sec-h">Kolumna prawa</div><div id="col-1-articles"></div><button class="add-btn" data-col="1">+ Dodaj artykul</button></div>
   </div>
 </div>
 
-<!-- HTML -->
 <div class="panel" id="panel-html">
   <div class="card">
     <div class="sec-h">Gotowy kod HTML</div>
-    <p class="note">Wklej do tresci strony Bear Blog.<br>
-    W ustawieniach strony ustaw <strong>Content type: HTML</strong> (nie Markdown).</p>
+    <p class="note">Wklej do tresci strony Bear Blog. Ustaw <strong>Content type: HTML</strong>.</p>
     <textarea id="html-out" readonly></textarea>
-    <div style="margin-top:12px">
-      <button id="copy-btn2" style="padding:8px 18px;background:#1c1c1c;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:.85rem;font-weight:600">Kopiuj HTML</button>
-    </div>
+    <div style="margin-top:12px"><button id="copy-btn2" style="padding:8px 18px;background:#1c1c1c;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:.85rem;font-weight:600">Kopiuj HTML</button></div>
   </div>
 </div>
 
 <script>
-/* ── dane ────────────────────────────────────────────────────────────── */
+var SAVE_KEY = "gazeta_v3";
 
-var state = {
+var DEFAULT_STATE = {
   masthead: "PTASZARNIA",
-  motto:    "Notatki z marginesu swiata",
-  date:     new Date().toLocaleDateString("pl-PL", { weekday:"long", year:"numeric", month:"long", day:"numeric" }),
-  edition:  "Nr 1",
+  motto: "Notatki z marginesu swiata",
+  date: new Date().toLocaleDateString("pl-PL",{weekday:"long",year:"numeric",month:"long",day:"numeric"}),
+  edition: "Nr 1",
   cols: [
     [
-      { dzial:"LITERATURA",  head:"Wharton po polsku",    body:"Po raz pierwszy Summer Edith Wharton ukazuje sie w polskim przekladzie.", link:"" },
-      { dzial:"ESEJ",        head:"Pareidolia",           body:"Mozg, ktory widzi wzory tam, gdzie ich nie ma.", link:"" },
-      { dzial:"HISTORIA",    head:"Twierdza Osowiec",     body:"Za grubymi murami kryja sie opowiesci, ktore historia woli przemilczec.", link:"" },
+      {dzial:"LITERATURA", head:"Wharton po polsku",   body:"Po raz pierwszy Summer Edith Wharton ukazuje sie w polskim przekladzie.", link:""},
+      {dzial:"ESEJ",       head:"Pareidolia",          body:"Mozg, ktory widzi wzory tam, gdzie ich nie ma.", link:""},
+      {dzial:"HISTORIA",   head:"Twierdza Osowiec",    body:"Za grubymi murami kryja sie zapomniane opowiesci.", link:""}
     ],
     [
-      { dzial:"ISLANDIA",    head:"Margret hin haga",     body:"Kim byla rzezbiarka, ktorej dlutom przypisuje sie szachy z Lewisu?", link:"" },
-      { dzial:"PRZYRODA",    head:"Biebrza wiosna",       body:"Bataliony odprawiaja toki, a zurawie kroca przez trzcinowiska.", link:"" },
-      { dzial:"FOTOGRAFIA",  head:"Powrot do kliszy",     body:"Ziarnistosc analogu ma cos, czego algorytm nie potrafi nasladowac.", link:"" },
+      {dzial:"ISLANDIA",   head:"Margret hin haga",    body:"Kim byla rzezbiarka, ktorej dlutom przypisuje sie szachy z Lewisu?", link:""},
+      {dzial:"PRZYRODA",   head:"Biebrza wiosna",      body:"Bataliony odprawiaja toki, a zurawie kroca przez trzcinowiska.", link:""},
+      {dzial:"FOTOGRAFIA", head:"Powrot do kliszy",    body:"Ziarnistosc analogu ma cos, czego algorytm nie potrafi nasladowac.", link:""}
     ]
   ]
 };
 
-/* ── podglad ─────────────────────────────────────────────────────────── */
+/* ── stan ── */
+
+var S = loadOrDefault();
+
+function loadOrDefault() {
+  try {
+    var raw = localStorage.getItem(SAVE_KEY);
+    if (raw) {
+      var p = JSON.parse(raw);
+      if (p && p.cols) {
+        // merge with defaults to handle missing fields
+        return {
+          masthead: p.masthead || DEFAULT_STATE.masthead,
+          motto:    p.motto    || DEFAULT_STATE.motto,
+          date:     p.date     || DEFAULT_STATE.date,
+          edition:  p.edition  || DEFAULT_STATE.edition,
+          cols:     (p.cols && p.cols.length === 2) ? p.cols : DEFAULT_STATE.cols
+        };
+      }
+    }
+  } catch(e) {}
+  return JSON.parse(JSON.stringify(DEFAULT_STATE));
+}
+
+function testStorage() {
+  try {
+    localStorage.setItem("_test", "1");
+    var ok = localStorage.getItem("_test") === "1";
+    localStorage.removeItem("_test");
+    return ok;
+  } catch(e) { return false; }
+}
+
+function save() {
+  try { localStorage.setItem(SAVE_KEY, JSON.stringify(S)); } catch(e) {}
+  var ind = document.getElementById("save-ind");
+  ind.textContent = "\u2714 Zapisano";
+  ind.style.opacity = "1";
+  clearTimeout(ind._t);
+  ind._t = setTimeout(function(){ ind.style.opacity = "0"; }, 1500);
+}
+
+/* ── helpers ── */
+
+function esc(s) {
+  return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+
+/* ── render podglad ── */
 
 function renderPreview() {
-  document.getElementById("np-mast").textContent    = state.masthead;
-  document.getElementById("np-motto").textContent   = state.motto;
-  document.getElementById("np-date").textContent    = state.date;
-  document.getElementById("np-edition").textContent = state.edition;
-  [0,1].forEach(function(ci) {
-    var col = document.getElementById("np-col-" + ci);
+  document.getElementById("np-mast").textContent    = S.masthead;
+  document.getElementById("np-motto").textContent   = S.motto;
+  document.getElementById("np-date").textContent    = S.date;
+  document.getElementById("np-edition").textContent = S.edition;
+  [0,1].forEach(function(ci){
+    var col = document.getElementById("np-col-"+ci);
     col.innerHTML = "";
-    state.cols[ci].forEach(function(art, ai) {
-      var div = document.createElement("div");
-      div.className = "np-art";
-      div.innerHTML =
-        '<div class="np-dzial">' + esc(art.dzial) + '</div>' +
-        '<h2 class="np-head">'  + esc(art.head)  + '</h2>' +
-        '<p class="np-body">'   + esc(art.body)  + '</p>' +
-        (art.link ? '<a class="np-link" href="' + esc(art.link) + '">Czytaj dalej</a>' : '');
-      col.appendChild(div);
+    S.cols[ci].forEach(function(art){
+      var d = document.createElement("div");
+      d.className = "np-art";
+      d.innerHTML = '<div class="np-dzial">'+esc(art.dzial)+'</div>'+
+        '<h2 class="np-head">'+esc(art.head)+'</h2>'+
+        '<p class="np-body">'+esc(art.body)+'</p>'+
+        (art.link?'<a class="np-link" href="'+esc(art.link)+'">Czytaj dalej</a>':'');
+      col.appendChild(d);
     });
   });
 }
 
-/* ── edytor ──────────────────────────────────────────────────────────── */
+/* ── render edytor ── */
 
 function renderEditor() {
-  [0,1].forEach(function(ci) {
-    var container = document.getElementById("col-" + ci + "-articles");
+  document.getElementById("f-masthead").value = S.masthead;
+  document.getElementById("f-motto").value    = S.motto;
+  document.getElementById("f-date").value     = S.date;
+  document.getElementById("f-edition").value  = S.edition;
+  [0,1].forEach(function(ci){
+    var container = document.getElementById("col-"+ci+"-articles");
     container.innerHTML = "";
-    state.cols[ci].forEach(function(art, ai) {
+    S.cols[ci].forEach(function(art, ai){
       var card = document.createElement("div");
       card.className = "art-card";
       card.innerHTML =
-        '<div class="art-hdr">' +
-          '<span class="art-num">Artykul ' + (ai+1) + '</span>' +
-          (state.cols[ci].length > 1
-            ? '<button class="rm-btn" data-col="'+ci+'" data-art="'+ai+'">×</button>'
-            : '') +
-        '</div>' +
-        '<div class="fld"><label class="lbl">Dzial</label>' +
-          '<input class="inp" data-col="'+ci+'" data-art="'+ai+'" data-field="dzial" value="'+esc(art.dzial)+'"></div>' +
-        '<div class="fld"><label class="lbl">Naglowek</label>' +
-          '<input class="inp" data-col="'+ci+'" data-art="'+ai+'" data-field="head" value="'+esc(art.head)+'"></div>' +
-        '<div class="fld"><label class="lbl">Tekst</label>' +
-          '<textarea class="ta" data-col="'+ci+'" data-art="'+ai+'" data-field="body">'+esc(art.body)+'</textarea></div>' +
-        '<div class="fld"><label class="lbl">Link (opcjonalny)</label>' +
+        '<div class="art-hdr">'+
+          '<span class="art-num">Artykul '+(ai+1)+'</span>'+
+          (S.cols[ci].length>1?'<button class="rm-btn" data-col="'+ci+'" data-art="'+ai+'">x</button>':'')+
+        '</div>'+
+        '<div class="fld"><label class="lbl">Dzial</label>'+
+          '<input class="inp" data-col="'+ci+'" data-art="'+ai+'" data-field="dzial" value="'+esc(art.dzial)+'"></div>'+
+        '<div class="fld"><label class="lbl">Naglowek</label>'+
+          '<input class="inp" data-col="'+ci+'" data-art="'+ai+'" data-field="head" value="'+esc(art.head)+'"></div>'+
+        '<div class="fld"><label class="lbl">Tekst</label>'+
+          '<textarea class="ta" data-col="'+ci+'" data-art="'+ai+'" data-field="body">'+esc(art.body)+'</textarea></div>'+
+        '<div class="fld"><label class="lbl">Link</label>'+
           '<input class="inp" data-col="'+ci+'" data-art="'+ai+'" data-field="link" value="'+esc(art.link)+'" placeholder="/slug-wpisu"></div>';
       container.appendChild(card);
     });
   });
 }
 
-/* ── HTML output ─────────────────────────────────────────────────────── */
+/* ── HTML output ── */
 
 function buildHTML() {
-  function artsHTML(col) {
-    return col.map(function(a) {
-      return '<article class="ga">\n' +
-        '    <div class="gd">' + esc(a.dzial) + '</div>\n' +
-        '    <h2 class="gh">'  + esc(a.head)  + '</h2>\n' +
-        '    <p class="gt">'   + esc(a.body)  + '</p>\n' +
-        (a.link ? '    <a class="gl" href="'+esc(a.link)+'">Czytaj dalej</a>\n' : '') +
+  function artsHTML(col){
+    return col.map(function(a){
+      return '<article class="ga">\n'+
+        '    <div class="gd">'+esc(a.dzial)+'</div>\n'+
+        '    <h2 class="gh">'+esc(a.head)+'</h2>\n'+
+        '    <p class="gt">'+esc(a.body)+'</p>\n'+
+        (a.link?'    <a class="gl" href="'+esc(a.link)+'">Czytaj dalej</a>\n':'')+
         '  </article>';
     }).join("\n  ");
   }
-  return '<style>\n' +
-'@import url(\'https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Playfair+Display:wght@700&family=IM+Fell+English:ital@0;1&display=swap\');\n' +
-'.gazeta{background:#f4efe0;color:#1c1c1c;font-family:\'IM Fell English\',Georgia,serif;max-width:680px;margin:0 auto;padding:28px;border:1px solid #ccc;box-shadow:4px 4px 18px rgba(0,0,0,.1)}\n' +
-'.gmas{font-family:\'Cinzel\',serif;font-size:clamp(2rem,5vw,3.6rem);text-align:center;letter-spacing:2px;line-height:1.05;margin:0 0 6px;display:block}\n' +
-'.gmot{text-align:center;font-style:italic;font-size:.82rem;color:#555;margin:0 0 10px}\n' +
-'.gmet{display:flex;justify-content:space-between;border-top:3px solid #1c1c1c;border-bottom:1px solid #1c1c1c;padding:4px 0;margin:0 0 20px;font-size:.68rem;letter-spacing:1.5px;text-transform:uppercase}\n' +
-'.gcols{display:grid;grid-template-columns:1fr 1fr}\n' +
-'.gcol{padding:0 18px}.gcol:first-child{border-right:1px solid #aaa;padding-left:0}.gcol:last-child{padding-right:0}\n' +
-'.ga{margin:0 0 16px;padding:0 0 16px;border-bottom:1px solid #ccc}.ga:last-child{border:none;margin:0;padding:0}\n' +
-'.gd{font-size:.58rem;letter-spacing:2.5px;text-transform:uppercase;color:#888;margin:0 0 3px}\n' +
-'.gh{font-family:\'Playfair Display\',serif;font-weight:700;font-size:1.15rem;line-height:1.2;margin:0 0 6px}\n' +
-'.gt{font-size:.83rem;line-height:1.6;margin:0}\n' +
-'.gl{display:inline-block;margin-top:5px;font-size:.68rem;letter-spacing:1px;text-transform:uppercase;color:#666;text-decoration:none;border-bottom:1px solid #999}\n' +
-'@media(max-width:580px){.gcols{display:block}.gcol:first-child{border-right:none;border-bottom:1px solid #aaa;padding:0 0 20px;margin-bottom:20px}}\n' +
-'</style>\n' +
-'<div class="gazeta">\n' +
-'  <span class="gmas">' + esc(state.masthead) + '</span>\n' +
-'  <p class="gmot">'    + esc(state.motto)    + '</p>\n' +
-'  <div class="gmet"><span>' + esc(state.date) + '</span><span>' + esc(state.edition) + '</span></div>\n' +
-'  <div class="gcols">\n' +
-'    <div class="gcol">\n  ' + artsHTML(state.cols[0]) + '\n  </div>\n' +
-'    <div class="gcol">\n  ' + artsHTML(state.cols[1]) + '\n  </div>\n' +
-'  </div>\n' +
+  return '<style>\n'+
+'@import url(\'https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Playfair+Display:wght@700&family=IM+Fell+English:ital@0;1&display=swap\');\n'+
+'.gazeta{background:#f4efe0;color:#1c1c1c;font-family:\'IM Fell English\',Georgia,serif;max-width:680px;margin:0 auto;padding:28px;border:1px solid #ccc;box-shadow:4px 4px 18px rgba(0,0,0,.1)}\n'+
+'.gmas{font-family:\'Cinzel\',serif;font-size:clamp(1.8rem,5vw,3rem);text-align:center;letter-spacing:2px;line-height:1.1;margin:0 0 6px;display:block}\n'+
+'.gmot{text-align:center;font-style:italic;font-size:.82rem;color:#555;margin:0 0 10px}\n'+
+'.gmet{display:flex;justify-content:space-between;border-top:3px solid #1c1c1c;border-bottom:1px solid #1c1c1c;padding:4px 0;margin:0 0 20px;font-size:.68rem;letter-spacing:1.5px;text-transform:uppercase}\n'+
+'.gcols{display:grid;grid-template-columns:1fr 1fr}\n'+
+'.gcol{padding:0 18px}.gcol:first-child{border-right:1px solid #aaa;padding-left:0}.gcol:last-child{padding-right:0}\n'+
+'.ga{margin:0 0 16px;padding:0 0 16px;border-bottom:1px solid #ccc}.ga:last-child{border:none;margin:0;padding:0}\n'+
+'.gd{font-size:.58rem;letter-spacing:2.5px;text-transform:uppercase;color:#888;margin:0 0 3px}\n'+
+'.gh{font-family:\'Playfair Display\',serif;font-weight:700;font-size:1.1rem;line-height:1.2;margin:0 0 6px}\n'+
+'.gt{font-size:.83rem;line-height:1.6;margin:0}\n'+
+'.gl{display:inline-block;margin-top:5px;font-size:.68rem;letter-spacing:1px;text-transform:uppercase;color:#666;text-decoration:none;border-bottom:1px solid #999}\n'+
+'@media(max-width:580px){.gcols{display:block}.gcol:first-child{border-right:none;border-bottom:1px solid #aaa;padding:0 0 20px;margin-bottom:20px}}\n'+
+'</style>\n'+
+'<div class="gazeta">\n'+
+'  <span class="gmas">'+esc(S.masthead)+'</span>\n'+
+'  <p class="gmot">'+esc(S.motto)+'</p>\n'+
+'  <div class="gmet"><span>'+esc(S.date)+'</span><span>'+esc(S.edition)+'</span></div>\n'+
+'  <div class="gcols">\n'+
+'    <div class="gcol">\n  '+artsHTML(S.cols[0])+'\n  </div>\n'+
+'    <div class="gcol">\n  '+artsHTML(S.cols[1])+'\n  </div>\n'+
+'  </div>\n'+
 '</div>';
 }
 
-function esc(str) {
-  return String(str || "")
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;");
-}
-
-function updateAll() {
-  renderPreview();
-  document.getElementById("html-out").value = buildHTML();
-}
-
-/* ── eventy ──────────────────────────────────────────────────────────── */
+/* ── eventy ── */
 
 // taby
-document.querySelectorAll(".tab-btn").forEach(function(btn) {
-  btn.addEventListener("click", function() {
-    document.querySelectorAll(".tab-btn").forEach(function(b){ b.classList.remove("active"); });
-    document.querySelectorAll(".panel").forEach(function(p){ p.classList.remove("active"); });
+document.querySelectorAll(".tab-btn").forEach(function(btn){
+  btn.addEventListener("click", function(){
+    document.querySelectorAll(".tab-btn").forEach(function(b){b.classList.remove("active");});
+    document.querySelectorAll(".panel").forEach(function(p){p.classList.remove("active");});
     btn.classList.add("active");
-    document.getElementById("panel-" + btn.dataset.tab).classList.add("active");
-    if (btn.dataset.tab === "html") {
-      document.getElementById("html-out").value = buildHTML();
-    }
+    var tab = btn.dataset.tab;
+    document.getElementById("panel-"+tab).classList.add("active");
+    if (tab === "edytor") renderEditor();
+    if (tab === "html")   document.getElementById("html-out").value = buildHTML();
   });
 });
 
-// meta pola
-["masthead","motto","date","edition"].forEach(function(field) {
-  document.getElementById("f-" + field).addEventListener("input", function(e) {
-    state[field] = e.target.value;
-    updateAll();
+// meta
+["masthead","motto","date","edition"].forEach(function(field){
+  document.getElementById("f-"+field).addEventListener("input", function(e){
+    S[field] = e.target.value;
+    renderPreview();
+    save();
   });
 });
 
-// delegacja: inputs w edytorze
-document.getElementById("panel-edytor").addEventListener("input", function(e) {
+// artykuly - input
+document.getElementById("panel-edytor").addEventListener("input", function(e){
   var el = e.target;
   if (!el.dataset.field) return;
-  var ci    = +el.dataset.col;
-  var ai    = +el.dataset.art;
-  var field = el.dataset.field;
-  state.cols[ci][ai][field] = el.value;
+  S.cols[+el.dataset.col][+el.dataset.art][el.dataset.field] = el.value;
   renderPreview();
-  document.getElementById("html-out").value = buildHTML();
+  save();
 });
 
-// delegacja: kliknięcia (usuń, dodaj)
-document.getElementById("panel-edytor").addEventListener("click", function(e) {
+// artykuly - kliknięcia
+document.getElementById("panel-edytor").addEventListener("click", function(e){
   var rm = e.target.closest(".rm-btn");
   if (rm) {
-    var ci = +rm.dataset.col;
-    var ai = +rm.dataset.art;
-    state.cols[ci].splice(ai, 1);
-    renderEditor();
-    updateAll();
-    return;
+    S.cols[+rm.dataset.col].splice(+rm.dataset.art, 1);
+    renderEditor(); renderPreview(); save(); return;
   }
   var add = e.target.closest(".add-btn");
   if (add) {
-    var ci = +add.dataset.col;
-    state.cols[ci].push({ dzial:"DZIAL", head:"Nowy artykul", body:"", link:"" });
-    renderEditor();
-    updateAll();
-    return;
+    S.cols[+add.dataset.col].push({dzial:"DZIAL",head:"Nowy artykul",body:"",link:""});
+    renderEditor(); renderPreview(); save(); return;
   }
 });
 
 // copy
-function doCopy() {
-  var txt = buildHTML();
-  navigator.clipboard.writeText(txt).then(function() {
-    ["copy-btn","copy-btn2"].forEach(function(id) {
-      var btn = document.getElementById(id);
-      if (btn) { btn.textContent = "Skopiowano!"; btn.classList.add("ok"); }
+function doCopy(){
+  navigator.clipboard.writeText(buildHTML()).then(function(){
+    ["copy-btn","copy-btn2"].forEach(function(id){
+      var b=document.getElementById(id);
+      if(b){b.textContent="Skopiowano!";b.classList.add("ok");}
     });
-    setTimeout(function() {
-      ["copy-btn","copy-btn2"].forEach(function(id) {
-        var btn = document.getElementById(id);
-        if (btn) { btn.textContent = "Kopiuj HTML"; btn.classList.remove("ok"); }
+    setTimeout(function(){
+      ["copy-btn","copy-btn2"].forEach(function(id){
+        var b=document.getElementById(id);
+        if(b){b.textContent="Kopiuj HTML";b.classList.remove("ok");}
       });
-    }, 2500);
+    },2500);
   });
 }
-document.getElementById("copy-btn").addEventListener("click", doCopy);
-document.getElementById("copy-btn2").addEventListener("click", doCopy);
+document.getElementById("copy-btn").addEventListener("click",doCopy);
+document.getElementById("copy-btn2").addEventListener("click",doCopy);
 
-/* ── init ────────────────────────────────────────────────────────────── */
-
-/* autosave */
-var SAVE_KEY = "gazeta_v1";
-var ind = document.getElementById("save-indicator");
-
-function saveState() {
-  try { localStorage.setItem(SAVE_KEY, JSON.stringify(state)); } catch(e) {}
-  ind.textContent = "✔ Zapisano";
-  ind.style.opacity = "1";
-  clearTimeout(ind._t);
-  ind._t = setTimeout(function(){ ind.style.opacity = "0"; }, 1500);
-}
-
-function loadState() {
-  try {
-    var s = localStorage.getItem(SAVE_KEY);
-    if (!s) return;
-    var p = JSON.parse(s);
-    if (p.masthead) state.masthead = p.masthead;
-    if (p.motto)    state.motto    = p.motto;
-    if (p.date)     state.date     = p.date;
-    if (p.edition)  state.edition  = p.edition;
-    if (p.cols && p.cols.length === 2) state.cols = p.cols;
-    document.getElementById("f-masthead").value = state.masthead;
-    document.getElementById("f-motto").value    = state.motto;
-    document.getElementById("f-date").value     = state.date;
-    document.getElementById("f-edition").value  = state.edition;
-  } catch(e) {}
-}
-
-var _origUpdate = updateAll;
-updateAll = function() { _origUpdate(); saveState(); };
-
-document.getElementById("reset-btn").addEventListener("click", function() {
-  if (confirm("Usunac zapisane dane i wrocic do przykladowych?")) {
+// reset
+document.getElementById("reset-btn").addEventListener("click",function(){
+  if(confirm("Usunac zapisane dane i wrocic do szablonu?")){
     localStorage.removeItem(SAVE_KEY);
     location.reload();
   }
 });
 
-loadState();
-document.getElementById("f-date").value = state.date;
+/* ── init ── */
+if (!testStorage()) {
+  var ind = document.getElementById("save-ind");
+  ind.textContent = "⚠ Brak localStorage — zapis niedostepny";
+  ind.style.color = "#c62828";
+  ind.style.opacity = "1";
+} else {
+  var wasLoaded = (function(){
+    try { return !!localStorage.getItem(SAVE_KEY); } catch(e) { return false; }
+  })();
+  if (wasLoaded) {
+    var ind = document.getElementById("save-ind");
+    ind.textContent = "✔ Wczytano zapisany stan";
+    ind.style.color = "#1565c0";
+    ind.style.opacity = "1";
+    setTimeout(function(){ ind.style.opacity = "0"; }, 2500);
+  }
+}
 renderEditor();
-updateAll();
+renderPreview();
 </script>
 </body>
 </html>
