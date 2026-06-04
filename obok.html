@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Generator Gazety</title>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Playfair+Display:wght@700;900&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Playfair+Display:wght@700&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box}
 body{margin:0;padding:16px;background:#ede8de;font-family:system-ui,sans-serif;color:#1c1c1c}
@@ -13,32 +13,33 @@ input,textarea,button{font-family:inherit}
 input:focus,textarea:focus{outline:2px solid #1c1c1c;outline-offset:1px}
 
 #topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px}
-#topbar h1{font-size:1rem;font-weight:700;color:#333;display:flex;align-items:center;gap:8px}
-#save-ind{font-size:.7rem;font-weight:400;color:#2e7d32;transition:opacity .5s;opacity:0}
+#app-title{font-size:1rem;font-weight:700;color:#333;display:flex;align-items:center;gap:8px;margin:0}
+#save-ind{font-size:.7rem;font-weight:400;transition:opacity .5s;opacity:0}
 .bar-right{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
 .tabs{display:flex;gap:3px;background:#d9d3c7;border-radius:8px;padding:3px}
 .tab-btn{padding:6px 14px;border:none;border-radius:6px;cursor:pointer;font-size:.82rem;font-weight:400;background:transparent;color:#555}
 .tab-btn.active{background:#1c1c1c;color:#fff;font-weight:600}
-#copy-btn{padding:8px 18px;background:#1c1c1c;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:.85rem;font-weight:600}
-#copy-btn.ok{background:#2e7d32}
+.top-btn{padding:8px 14px;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:.82rem;font-weight:600}
+#copy-top{background:#1c1c1c}
+#copy-top.ok{background:#2e7d32}
 #reset-btn{padding:8px 10px;background:none;color:#aaa;border:1px solid #ccc;border-radius:6px;cursor:pointer;font-size:.8rem}
 
 .panel{display:none}.panel.active{display:block}
 
-/* newspaper */
+/* -- podglad -- */
 #newspaper{background:#f4efe0;color:#1c1c1c;font-family:'IM Fell English',Georgia,serif;max-width:680px;margin:0 auto;padding:28px;border:1px solid #ccc;box-shadow:4px 4px 18px rgba(0,0,0,.1)}
-#np-mast{font-family:'Cinzel',Georgia,serif;font-size:clamp(1.8rem,5vw,3rem);text-align:center;letter-spacing:2px;line-height:1.1;margin-bottom:6px}
+#np-mast{font-family:'Cinzel',Georgia,serif;font-size:clamp(1.8rem,4vw,2.8rem);text-align:center;letter-spacing:2px;line-height:1.1;margin-bottom:6px}
 #np-motto{text-align:center;font-style:italic;font-size:.82rem;color:#555;margin-bottom:10px}
 #np-meta{display:flex;justify-content:space-between;border-top:3px solid #1c1c1c;border-bottom:1px solid #1c1c1c;padding:4px 0;margin-bottom:20px;font-size:.68rem;letter-spacing:1.5px;text-transform:uppercase}
 #np-cols{display:grid;grid-template-columns:1fr 1fr}
-.np-col{padding:0 18px}.np-col:first-child{border-right:1px solid #aaa;padding-left:0}.np-col:last-child{padding-right:0}
-.np-art{margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid #ccc}.np-art:last-child{border:none;margin:0;padding:0}
-.np-dzial{font-size:.58rem;letter-spacing:2.5px;text-transform:uppercase;color:#888;margin-bottom:3px}
-.np-head{font-family:'Playfair Display',Georgia,serif;font-weight:700;font-size:1.1rem;line-height:1.2;margin:0 0 6px}
-.np-body{font-size:.83rem;line-height:1.6;margin:0}
-.np-link{display:inline-block;margin-top:5px;font-size:.68rem;letter-spacing:1px;text-transform:uppercase;color:#666;text-decoration:none;border-bottom:1px solid #999}
+.np-col{padding:0 16px}.np-col:first-child{border-right:1px solid #aaa;padding-left:0}.np-col:last-child{padding-right:0}
+.np-art{margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid #ccc}.np-art:last-child{border:none;margin:0;padding:0}
+.np-dz{font-size:.58rem;letter-spacing:2.5px;text-transform:uppercase;color:#888;margin-bottom:3px}
+.np-hd{font-family:'Playfair Display',Georgia,serif;font-weight:700;font-size:1.05rem;line-height:1.2;margin:0 0 5px}
+.np-bd{font-size:.82rem;line-height:1.6;margin:0}
+.np-lnk{display:inline-block;margin-top:4px;font-size:.68rem;letter-spacing:1px;text-transform:uppercase;color:#666;text-decoration:none;border-bottom:1px solid #999}
 
-/* editor */
+/* -- edytor -- */
 .card{background:#fff;border:1px solid #ddd8cc;border-radius:8px;padding:16px;margin-bottom:12px}
 .sec-h{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#888;padding-bottom:8px;border-bottom:2px solid #1c1c1c;margin-bottom:12px}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -50,17 +51,20 @@ input:focus,textarea:focus{outline:2px solid #1c1c1c;outline-offset:1px}
 .art-card{background:#faf8f4;border:1px solid #e8e2d8;border-radius:6px;padding:11px;margin-bottom:8px}
 .art-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
 .art-num{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#bbb}
-.rm-btn{background:none;border:none;color:#ccc;cursor:pointer;font-size:1.2rem;line-height:1;padding:0 2px}
-.rm-btn:hover{color:#e53935}
-.add-btn{width:100%;padding:8px;border:2px dashed #ccc;background:none;border-radius:6px;color:#aaa;cursor:pointer;font-size:.82rem}
-.add-btn:hover{border-color:#888;color:#555}
+.rm-btn{background:none;border:none;color:#ccc;cursor:pointer;font-size:1.2rem;line-height:1;padding:0 2px}.rm-btn:hover{color:#e53935}
+.add-btn{width:100%;padding:8px;border:2px dashed #ccc;background:none;border-radius:6px;color:#aaa;cursor:pointer;font-size:.82rem}.add-btn:hover{border-color:#888;color:#555}
 
-#html-out{width:100%;height:280px;font-family:monospace;font-size:.75rem;padding:12px;border:1px solid #ddd;border-radius:6px;resize:vertical;background:#f8f7f4;color:#333}
+/* -- html tab -- */
+#html-out{width:100%;height:260px;font-family:monospace;font-size:.74rem;padding:12px;border:1px solid #ddd;border-radius:6px;resize:vertical;background:#f8f7f4;color:#333}
 .note{font-size:.82rem;color:#666;margin-bottom:10px;line-height:1.6}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.html-btn{padding:8px 16px;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:.83rem;font-weight:600}
+#copy-web{background:#1c1c1c}#copy-web.ok{background:#2e7d32}
+#copy-email{background:#555}#copy-email.ok{background:#2e7d32}
 
 @media(max-width:600px){
   .grid2,.cols-grid,#np-cols{grid-template-columns:1fr}
-  .np-col:first-child{border-right:none;border-bottom:1px solid #aaa;padding:0 0 16px;margin-bottom:16px}
+  .np-col:first-child{border-right:none;border-bottom:1px solid #aaa;padding:0 0 14px;margin-bottom:14px}
   .np-col:last-child{padding:0}
 }
 </style>
@@ -68,18 +72,19 @@ input:focus,textarea:focus{outline:2px solid #1c1c1c;outline-offset:1px}
 <body>
 
 <div id="topbar">
-  <h1>Generator gazety <span id="save-ind"></span></h1>
+  <h1 id="app-title">Generator gazety <span id="save-ind"></span></h1>
   <div class="bar-right">
     <div class="tabs">
       <button class="tab-btn active" data-tab="podglad">Podglad</button>
       <button class="tab-btn" data-tab="edytor">Edytuj</button>
       <button class="tab-btn" data-tab="html">HTML</button>
     </div>
-    <button id="copy-btn">Kopiuj HTML</button>
-    <button id="reset-btn" title="Wyczysc i zacznij od nowa">Reset</button>
+    <button class="top-btn" id="copy-top">Kopiuj HTML</button>
+    <button id="reset-btn">Reset</button>
   </div>
 </div>
 
+<!-- PODGLAD -->
 <div class="panel active" id="panel-podglad">
   <div id="newspaper">
     <div id="np-mast"></div>
@@ -92,6 +97,7 @@ input:focus,textarea:focus{outline:2px solid #1c1c1c;outline-offset:1px}
   </div>
 </div>
 
+<!-- EDYTOR -->
 <div class="panel" id="panel-edytor">
   <div class="card">
     <div class="sec-h">Naglowek gazety</div>
@@ -103,129 +109,136 @@ input:focus,textarea:focus{outline:2px solid #1c1c1c;outline-offset:1px}
     </div>
   </div>
   <div class="cols-grid">
-    <div><div class="sec-h">Kolumna lewa</div><div id="col-0-articles"></div><button class="add-btn" data-col="0">+ Dodaj artykul</button></div>
-    <div><div class="sec-h">Kolumna prawa</div><div id="col-1-articles"></div><button class="add-btn" data-col="1">+ Dodaj artykul</button></div>
+    <div>
+      <div class="sec-h">Kolumna lewa</div>
+      <div id="col-0-articles"></div>
+      <button class="add-btn" data-col="0">+ Dodaj artykul</button>
+    </div>
+    <div>
+      <div class="sec-h">Kolumna prawa</div>
+      <div id="col-1-articles"></div>
+      <button class="add-btn" data-col="1">+ Dodaj artykul</button>
+    </div>
   </div>
 </div>
 
+<!-- HTML -->
 <div class="panel" id="panel-html">
   <div class="card">
     <div class="sec-h">Gotowy kod HTML</div>
-    <p class="note">Wklej do tresci strony Bear Blog. Ustaw <strong>Content type: HTML</strong>.</p>
+    <p class="note">
+      <strong>Strona (Bear Blog):</strong> ustaw Content type: HTML.<br>
+      <strong>Email (Gmail):</strong> Nowa wiadomosc &rarr; trzy kropki &rarr; Edytuj jako HTML &rarr; wklej.
+    </p>
     <textarea id="html-out" readonly></textarea>
-    <div style="margin-top:12px"><button id="copy-btn2" style="padding:8px 18px;background:#1c1c1c;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:.85rem;font-weight:600">Kopiuj HTML</button></div>
+    <div class="btn-row">
+      <button class="html-btn" id="copy-web">Kopiuj HTML (strona)</button>
+      <button class="html-btn" id="copy-email">Kopiuj HTML (email/Gmail)</button>
+    </div>
   </div>
 </div>
 
 <script>
 var SAVE_KEY = "gazeta_v3";
 
-var DEFAULT_STATE = {
+var DEFAULTS = {
   masthead: "PTASZARNIA",
   motto: "Notatki z marginesu swiata",
   date: new Date().toLocaleDateString("pl-PL",{weekday:"long",year:"numeric",month:"long",day:"numeric"}),
   edition: "Nr 1",
   cols: [
     [
-      {dzial:"LITERATURA", head:"Wharton po polsku",   body:"Po raz pierwszy Summer Edith Wharton ukazuje sie w polskim przekladzie.", link:""},
-      {dzial:"ESEJ",       head:"Pareidolia",          body:"Mozg, ktory widzi wzory tam, gdzie ich nie ma.", link:""},
-      {dzial:"HISTORIA",   head:"Twierdza Osowiec",    body:"Za grubymi murami kryja sie zapomniane opowiesci.", link:""}
+      {dzial:"LITERATURA", head:"Wharton po polsku",  body:"Po raz pierwszy Summer Edith Wharton ukazuje sie w polskim przekladzie.", link:""},
+      {dzial:"ESEJ",       head:"Pareidolia",         body:"Mozg, ktory widzi wzory tam, gdzie ich nie ma.", link:""},
+      {dzial:"HISTORIA",   head:"Twierdza Osowiec",   body:"Za grubymi murami kryja sie zapomniane opowiesci.", link:""}
     ],
     [
-      {dzial:"ISLANDIA",   head:"Margret hin haga",    body:"Kim byla rzezbiarka, ktorej dlutom przypisuje sie szachy z Lewisu?", link:""},
-      {dzial:"PRZYRODA",   head:"Biebrza wiosna",      body:"Bataliony odprawiaja toki, a zurawie kroca przez trzcinowiska.", link:""},
-      {dzial:"FOTOGRAFIA", head:"Powrot do kliszy",    body:"Ziarnistosc analogu ma cos, czego algorytm nie potrafi nasladowac.", link:""}
+      {dzial:"ISLANDIA",   head:"Margret hin haga",   body:"Kim byla rzezbiarka, ktorej dlutom przypisuje sie szachy z Lewisu?", link:""},
+      {dzial:"PRZYRODA",   head:"Biebrza wiosna",     body:"Bataliony odprawiaja toki, a zurawie kroca przez trzcinowiska.", link:""},
+      {dzial:"FOTOGRAFIA", head:"Powrot do kliszy",   body:"Ziarnistosc analogu ma cos, czego algorytm nie potrafi nasladowac.", link:""}
     ]
   ]
 };
 
-/* ── stan ── */
+/* ---- stan ---- */
 
-var S = loadOrDefault();
-
-function loadOrDefault() {
+var S = (function() {
   try {
     var raw = localStorage.getItem(SAVE_KEY);
     if (raw) {
       var p = JSON.parse(raw);
-      if (p && p.cols) {
-        // merge with defaults to handle missing fields
-        return {
-          masthead: p.masthead || DEFAULT_STATE.masthead,
-          motto:    p.motto    || DEFAULT_STATE.motto,
-          date:     p.date     || DEFAULT_STATE.date,
-          edition:  p.edition  || DEFAULT_STATE.edition,
-          cols:     (p.cols && p.cols.length === 2) ? p.cols : DEFAULT_STATE.cols
-        };
-      }
+      if (p && p.cols && p.cols.length === 2) return p;
     }
   } catch(e) {}
-  return JSON.parse(JSON.stringify(DEFAULT_STATE));
+  return JSON.parse(JSON.stringify(DEFAULTS));
+})();
+
+/* ---- helpers ---- */
+
+function esc(s) {
+  return String(s||"")
+    .replace(/&/g,"&amp;").replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;").replace(/"/g,"&quot;");
 }
 
-function testStorage() {
-  try {
-    localStorage.setItem("_test", "1");
-    var ok = localStorage.getItem("_test") === "1";
-    localStorage.removeItem("_test");
-    return ok;
-  } catch(e) { return false; }
+function showInd(msg, color) {
+  var el = document.getElementById("save-ind");
+  el.textContent = msg;
+  el.style.color = color || "#2e7d32";
+  el.style.opacity = "1";
+  clearTimeout(el._t);
+  el._t = setTimeout(function(){ el.style.opacity = "0"; }, 2000);
 }
 
 function save() {
-  try { localStorage.setItem(SAVE_KEY, JSON.stringify(S)); } catch(e) {}
-  var ind = document.getElementById("save-ind");
-  ind.textContent = "\u2714 Zapisano";
-  ind.style.opacity = "1";
-  clearTimeout(ind._t);
-  ind._t = setTimeout(function(){ ind.style.opacity = "0"; }, 1500);
+  try {
+    localStorage.setItem(SAVE_KEY, JSON.stringify(S));
+    showInd("\u2714 Zapisano", "#2e7d32");
+  } catch(e) {
+    showInd("\u26a0 Blad zapisu", "#c62828");
+  }
 }
 
-/* ── helpers ── */
-
-function esc(s) {
-  return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
-}
-
-/* ── render podglad ── */
+/* ---- podglad ---- */
 
 function renderPreview() {
   document.getElementById("np-mast").textContent    = S.masthead;
   document.getElementById("np-motto").textContent   = S.motto;
   document.getElementById("np-date").textContent    = S.date;
   document.getElementById("np-edition").textContent = S.edition;
-  [0,1].forEach(function(ci){
+  [0,1].forEach(function(ci) {
     var col = document.getElementById("np-col-"+ci);
     col.innerHTML = "";
-    S.cols[ci].forEach(function(art){
+    S.cols[ci].forEach(function(art) {
       var d = document.createElement("div");
       d.className = "np-art";
-      d.innerHTML = '<div class="np-dzial">'+esc(art.dzial)+'</div>'+
-        '<h2 class="np-head">'+esc(art.head)+'</h2>'+
-        '<p class="np-body">'+esc(art.body)+'</p>'+
-        (art.link?'<a class="np-link" href="'+esc(art.link)+'">Czytaj dalej</a>':'');
+      d.innerHTML =
+        '<div class="np-dz">'+esc(art.dzial)+'</div>'+
+        '<h2 class="np-hd">'+esc(art.head)+'</h2>'+
+        '<p class="np-bd">'+esc(art.body)+'</p>'+
+        (art.link ? '<a class="np-lnk" href="'+esc(art.link)+'">Czytaj dalej</a>' : '');
       col.appendChild(d);
     });
   });
 }
 
-/* ── render edytor ── */
+/* ---- edytor ---- */
 
 function renderEditor() {
   document.getElementById("f-masthead").value = S.masthead;
   document.getElementById("f-motto").value    = S.motto;
   document.getElementById("f-date").value     = S.date;
   document.getElementById("f-edition").value  = S.edition;
-  [0,1].forEach(function(ci){
-    var container = document.getElementById("col-"+ci+"-articles");
-    container.innerHTML = "";
-    S.cols[ci].forEach(function(art, ai){
-      var card = document.createElement("div");
-      card.className = "art-card";
-      card.innerHTML =
+  [0,1].forEach(function(ci) {
+    var box = document.getElementById("col-"+ci+"-articles");
+    box.innerHTML = "";
+    S.cols[ci].forEach(function(art, ai) {
+      var c = document.createElement("div");
+      c.className = "art-card";
+      c.innerHTML =
         '<div class="art-hdr">'+
           '<span class="art-num">Artykul '+(ai+1)+'</span>'+
-          (S.cols[ci].length>1?'<button class="rm-btn" data-col="'+ci+'" data-art="'+ai+'">x</button>':'')+
+          (S.cols[ci].length > 1 ? '<button class="rm-btn" data-col="'+ci+'" data-art="'+ai+'">&times;</button>' : '')+
         '</div>'+
         '<div class="fld"><label class="lbl">Dzial</label>'+
           '<input class="inp" data-col="'+ci+'" data-art="'+ai+'" data-field="dzial" value="'+esc(art.dzial)+'"></div>'+
@@ -233,78 +246,117 @@ function renderEditor() {
           '<input class="inp" data-col="'+ci+'" data-art="'+ai+'" data-field="head" value="'+esc(art.head)+'"></div>'+
         '<div class="fld"><label class="lbl">Tekst</label>'+
           '<textarea class="ta" data-col="'+ci+'" data-art="'+ai+'" data-field="body">'+esc(art.body)+'</textarea></div>'+
-        '<div class="fld"><label class="lbl">Link</label>'+
-          '<input class="inp" data-col="'+ci+'" data-art="'+ai+'" data-field="link" value="'+esc(art.link)+'" placeholder="/slug-wpisu"></div>';
-      container.appendChild(card);
+        '<div class="fld"><label class="lbl">Link (opcjonalny)</label>'+
+          '<input class="inp" data-col="'+ci+'" data-art="'+ai+'" data-field="link" value="'+esc(art.link)+'" placeholder="/slug"></div>';
+      box.appendChild(c);
     });
   });
 }
 
-/* ── HTML output ── */
+/* ---- HTML na strone ---- */
 
-function buildHTML() {
-  function artsHTML(col){
-    return col.map(function(a){
+function buildWebHTML() {
+  function artsHTML(col) {
+    return col.map(function(a) {
       return '<article class="ga">\n'+
-        '    <div class="gd">'+esc(a.dzial)+'</div>\n'+
-        '    <h2 class="gh">'+esc(a.head)+'</h2>\n'+
-        '    <p class="gt">'+esc(a.body)+'</p>\n'+
-        (a.link?'    <a class="gl" href="'+esc(a.link)+'">Czytaj dalej</a>\n':'')+
-        '  </article>';
-    }).join("\n  ");
+        '  <div class="gd">'+esc(a.dzial)+'</div>\n'+
+        '  <h2 class="gh">'+esc(a.head)+'</h2>\n'+
+        '  <p class="gt">'+esc(a.body)+'</p>\n'+
+        (a.link ? '  <a class="gl" href="'+esc(a.link)+'">Czytaj dalej</a>\n' : '')+
+        '</article>';
+    }).join('\n');
   }
   return '<style>\n'+
 '@import url(\'https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Playfair+Display:wght@700&family=IM+Fell+English:ital@0;1&display=swap\');\n'+
 '.gazeta{background:#f4efe0;color:#1c1c1c;font-family:\'IM Fell English\',Georgia,serif;max-width:680px;margin:0 auto;padding:28px;border:1px solid #ccc;box-shadow:4px 4px 18px rgba(0,0,0,.1)}\n'+
-'.gmas{font-family:\'Cinzel\',serif;font-size:clamp(1.8rem,5vw,3rem);text-align:center;letter-spacing:2px;line-height:1.1;margin:0 0 6px;display:block}\n'+
+'.gmas{font-family:\'Cinzel\',serif;font-size:clamp(1.8rem,4vw,2.8rem);text-align:center;letter-spacing:2px;line-height:1.1;margin:0 0 6px;display:block}\n'+
 '.gmot{text-align:center;font-style:italic;font-size:.82rem;color:#555;margin:0 0 10px}\n'+
 '.gmet{display:flex;justify-content:space-between;border-top:3px solid #1c1c1c;border-bottom:1px solid #1c1c1c;padding:4px 0;margin:0 0 20px;font-size:.68rem;letter-spacing:1.5px;text-transform:uppercase}\n'+
 '.gcols{display:grid;grid-template-columns:1fr 1fr}\n'+
-'.gcol{padding:0 18px}.gcol:first-child{border-right:1px solid #aaa;padding-left:0}.gcol:last-child{padding-right:0}\n'+
-'.ga{margin:0 0 16px;padding:0 0 16px;border-bottom:1px solid #ccc}.ga:last-child{border:none;margin:0;padding:0}\n'+
+'.gcol{padding:0 16px}.gcol:first-child{border-right:1px solid #aaa;padding-left:0}.gcol:last-child{padding-right:0}\n'+
+'.ga{margin:0 0 14px;padding:0 0 14px;border-bottom:1px solid #ccc}.ga:last-child{border:none;margin:0;padding:0}\n'+
 '.gd{font-size:.58rem;letter-spacing:2.5px;text-transform:uppercase;color:#888;margin:0 0 3px}\n'+
-'.gh{font-family:\'Playfair Display\',serif;font-weight:700;font-size:1.1rem;line-height:1.2;margin:0 0 6px}\n'+
-'.gt{font-size:.83rem;line-height:1.6;margin:0}\n'+
-'.gl{display:inline-block;margin-top:5px;font-size:.68rem;letter-spacing:1px;text-transform:uppercase;color:#666;text-decoration:none;border-bottom:1px solid #999}\n'+
-'@media(max-width:580px){.gcols{display:block}.gcol:first-child{border-right:none;border-bottom:1px solid #aaa;padding:0 0 20px;margin-bottom:20px}}\n'+
+'.gh{font-family:\'Playfair Display\',serif;font-weight:700;font-size:1.05rem;line-height:1.2;margin:0 0 5px}\n'+
+'.gt{font-size:.82rem;line-height:1.6;margin:0}\n'+
+'.gl{display:inline-block;margin-top:4px;font-size:.68rem;letter-spacing:1px;text-transform:uppercase;color:#666;text-decoration:none;border-bottom:1px solid #999}\n'+
+'@media(max-width:560px){.gcols{display:block}.gcol:first-child{border-right:none;border-bottom:1px solid #aaa;padding:0 0 14px;margin-bottom:14px}.gcol:last-child{padding:0}}\n'+
 '</style>\n'+
 '<div class="gazeta">\n'+
 '  <span class="gmas">'+esc(S.masthead)+'</span>\n'+
 '  <p class="gmot">'+esc(S.motto)+'</p>\n'+
 '  <div class="gmet"><span>'+esc(S.date)+'</span><span>'+esc(S.edition)+'</span></div>\n'+
 '  <div class="gcols">\n'+
-'    <div class="gcol">\n  '+artsHTML(S.cols[0])+'\n  </div>\n'+
-'    <div class="gcol">\n  '+artsHTML(S.cols[1])+'\n  </div>\n'+
+'    <div class="gcol">\n'+artsHTML(S.cols[0])+'\n    </div>\n'+
+'    <div class="gcol">\n'+artsHTML(S.cols[1])+'\n    </div>\n'+
 '  </div>\n'+
 '</div>';
 }
 
-/* ── eventy ── */
+/* ---- HTML do emaila ---- */
 
-// taby
-document.querySelectorAll(".tab-btn").forEach(function(btn){
-  btn.addEventListener("click", function(){
-    document.querySelectorAll(".tab-btn").forEach(function(b){b.classList.remove("active");});
-    document.querySelectorAll(".panel").forEach(function(p){p.classList.remove("active");});
+function buildEmailHTML() {
+  function artRow(art) {
+    return '<tr><td style="padding:0 0 12px 0;border-bottom:1px solid #ccc;display:block;margin-bottom:12px">'+
+      '<p style="margin:0 0 3px;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#888;font-family:Georgia,serif">'+esc(art.dzial)+'</p>'+
+      '<h2 style="margin:0 0 5px;font-family:Georgia,serif;font-size:16px;font-weight:700;line-height:1.2;color:#1c1c1c">'+esc(art.head)+'</h2>'+
+      '<p style="margin:0;font-family:Georgia,serif;font-size:13px;line-height:1.6;color:#333">'+esc(art.body)+'</p>'+
+      (art.link ? '<p style="margin:5px 0 0"><a href="'+esc(art.link)+'" style="font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#666;text-decoration:none;border-bottom:1px solid #999">Czytaj dalej</a></p>' : '')+
+    '</td></tr>';
+  }
+  var c0 = S.cols[0].map(artRow).join('');
+  var c1 = S.cols[1].map(artRow).join('');
+  return '<!DOCTYPE html>\n<html>\n<head><meta charset="UTF-8"></head>\n<body style="margin:0;padding:0;background:#f0ece4">\n'+
+'<table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td align="center" style="padding:20px 10px">\n'+
+'<table width="640" cellpadding="0" cellspacing="0" border="0" style="max-width:640px;background:#f4efe0;border:1px solid #ccc">\n'+
+'<tr><td align="center" style="padding:24px 28px 6px">\n'+
+  '<p style="margin:0;font-family:Georgia,serif;font-size:34px;font-weight:700;letter-spacing:3px;color:#1c1c1c;line-height:1.1">'+esc(S.masthead)+'</p>\n'+
+  '<p style="margin:8px 0 0;font-family:Georgia,serif;font-style:italic;font-size:12px;color:#555">'+esc(S.motto)+'</p>\n'+
+'</td></tr>\n'+
+'<tr><td style="padding:0 28px">\n'+
+  '<table width="100%" cellpadding="0" cellspacing="0" border="0"><tr>\n'+
+    '<td style="border-top:3px solid #1c1c1c;border-bottom:1px solid #1c1c1c;padding:4px 0;font-family:Georgia,serif;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#1c1c1c">'+esc(S.date)+'</td>\n'+
+    '<td align="right" style="border-top:3px solid #1c1c1c;border-bottom:1px solid #1c1c1c;padding:4px 0;font-family:Georgia,serif;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#1c1c1c">'+esc(S.edition)+'</td>\n'+
+  '</tr></table>\n'+
+'</td></tr>\n'+
+'<tr><td style="padding:16px 28px 24px">\n'+
+  '<table width="100%" cellpadding="0" cellspacing="0" border="0"><tr valign="top">\n'+
+    '<td width="47%" style="padding-right:14px;border-right:1px solid #aaa"><table width="100%" cellpadding="0" cellspacing="0" border="0">'+c0+'</table></td>\n'+
+    '<td width="6%"></td>\n'+
+    '<td width="47%" style="padding-left:14px"><table width="100%" cellpadding="0" cellspacing="0" border="0">'+c1+'</table></td>\n'+
+  '</tr></table>\n'+
+'</td></tr>\n'+
+'</table>\n'+
+'</td></tr></table>\n'+
+'</body></html>';
+}
+
+/* ---- eventy: taby ---- */
+
+document.querySelectorAll(".tab-btn").forEach(function(btn) {
+  btn.addEventListener("click", function() {
+    document.querySelectorAll(".tab-btn").forEach(function(b){ b.classList.remove("active"); });
+    document.querySelectorAll(".panel").forEach(function(p){ p.classList.remove("active"); });
     btn.classList.add("active");
     var tab = btn.dataset.tab;
     document.getElementById("panel-"+tab).classList.add("active");
     if (tab === "edytor") renderEditor();
-    if (tab === "html")   document.getElementById("html-out").value = buildHTML();
+    if (tab === "html")   document.getElementById("html-out").value = buildWebHTML();
   });
 });
 
-// meta
-["masthead","motto","date","edition"].forEach(function(field){
-  document.getElementById("f-"+field).addEventListener("input", function(e){
-    S[field] = e.target.value;
+/* ---- eventy: meta pola ---- */
+
+["masthead","motto","date","edition"].forEach(function(f) {
+  document.getElementById("f-"+f).addEventListener("input", function(e) {
+    S[f] = e.target.value;
     renderPreview();
     save();
   });
 });
 
-// artykuly - input
-document.getElementById("panel-edytor").addEventListener("input", function(e){
+/* ---- eventy: artykuly ---- */
+
+document.getElementById("panel-edytor").addEventListener("input", function(e) {
   var el = e.target;
   if (!el.dataset.field) return;
   S.cols[+el.dataset.col][+el.dataset.art][el.dataset.field] = el.value;
@@ -312,8 +364,7 @@ document.getElementById("panel-edytor").addEventListener("input", function(e){
   save();
 });
 
-// artykuly - kliknięcia
-document.getElementById("panel-edytor").addEventListener("click", function(e){
+document.getElementById("panel-edytor").addEventListener("click", function(e) {
   var rm = e.target.closest(".rm-btn");
   if (rm) {
     S.cols[+rm.dataset.col].splice(+rm.dataset.art, 1);
@@ -326,50 +377,41 @@ document.getElementById("panel-edytor").addEventListener("click", function(e){
   }
 });
 
-// copy
-function doCopy(){
-  navigator.clipboard.writeText(buildHTML()).then(function(){
-    ["copy-btn","copy-btn2"].forEach(function(id){
-      var b=document.getElementById(id);
-      if(b){b.textContent="Skopiowano!";b.classList.add("ok");}
-    });
-    setTimeout(function(){
-      ["copy-btn","copy-btn2"].forEach(function(id){
-        var b=document.getElementById(id);
-        if(b){b.textContent="Kopiuj HTML";b.classList.remove("ok");}
-      });
-    },2500);
-  });
-}
-document.getElementById("copy-btn").addEventListener("click",doCopy);
-document.getElementById("copy-btn2").addEventListener("click",doCopy);
+/* ---- copy: strona ---- */
 
-// reset
-document.getElementById("reset-btn").addEventListener("click",function(){
-  if(confirm("Usunac zapisane dane i wrocic do szablonu?")){
+function flashBtn(id, label) {
+  var btn = document.getElementById(id);
+  var orig = btn.textContent;
+  btn.textContent = "Skopiowano!";
+  btn.classList.add("ok");
+  setTimeout(function(){ btn.textContent = orig; btn.classList.remove("ok"); }, 2500);
+}
+
+document.getElementById("copy-top").addEventListener("click", function() {
+  navigator.clipboard.writeText(buildWebHTML()).then(function(){ flashBtn("copy-top"); });
+});
+document.getElementById("copy-web").addEventListener("click", function() {
+  navigator.clipboard.writeText(buildWebHTML()).then(function(){ flashBtn("copy-web"); });
+});
+document.getElementById("copy-email").addEventListener("click", function() {
+  navigator.clipboard.writeText(buildEmailHTML()).then(function(){ flashBtn("copy-email"); });
+});
+
+/* ---- reset ---- */
+
+document.getElementById("reset-btn").addEventListener("click", function() {
+  if (confirm("Usunac zapisane dane i wrocic do szablonu?")) {
     localStorage.removeItem(SAVE_KEY);
     location.reload();
   }
 });
 
-/* ── init ── */
-if (!testStorage()) {
-  var ind = document.getElementById("save-ind");
-  ind.textContent = "⚠ Brak localStorage — zapis niedostepny";
-  ind.style.color = "#c62828";
-  ind.style.opacity = "1";
-} else {
-  var wasLoaded = (function(){
-    try { return !!localStorage.getItem(SAVE_KEY); } catch(e) { return false; }
-  })();
-  if (wasLoaded) {
-    var ind = document.getElementById("save-ind");
-    ind.textContent = "✔ Wczytano zapisany stan";
-    ind.style.color = "#1565c0";
-    ind.style.opacity = "1";
-    setTimeout(function(){ ind.style.opacity = "0"; }, 2500);
-  }
-}
+/* ---- init ---- */
+
+var hadSave = false;
+try { hadSave = !!localStorage.getItem(SAVE_KEY); } catch(e) {}
+if (hadSave) showInd("\u2714 Wczytano zapisany stan", "#1565c0");
+
 renderEditor();
 renderPreview();
 </script>
