@@ -294,9 +294,13 @@ function renderEditor() {
 /* ---- RSS ---- */
 
 var RSS_PROXIES = [
-  function(u){ return "https://api.allorigins.win/raw?url=" + encodeURIComponent(u); },
-  function(u){ return "https://corsproxy.io/?" + encodeURIComponent(u); },
-  function(u){ return u; }
+  { typ:"xml",  url:function(u){ return "https://api.codetabs.com/v1/proxy?quest=" + encodeURIComponent(u); } },
+  { typ:"xml",  url:function(u){ return "https://api.allorigins.win/raw?url=" + encodeURIComponent(u); } },
+  { typ:"json", url:function(u){ return "https://api.allorigins.win/get?url=" + encodeURIComponent(u); } },
+  { typ:"r2j",  url:function(u){ return "https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent(u); } },
+  { typ:"xml",  url:function(u){ return "https://corsproxy.io/?url=" + encodeURIComponent(u); } },
+  { typ:"xml",  url:function(u){ return "https://thingproxy.freeboard.io/fetch/" + u; } },
+  { typ:"xml",  url:function(u){ return u; } }
 ];
 
 function rssStatus(msg, cls) {
@@ -368,19 +372,46 @@ function dzialZDaty(dateStr) {
 }
 
 async function pobierzFeed(url) {
-  var ostatniBlad = null;
+  var bledy = [];
   for (var i = 0; i < RSS_PROXIES.length; i++) {
+    var p = RSS_PROXIES[i];
     try {
-      var res = await fetch(RSS_PROXIES[i](url));
-      if (!res.ok) { ostatniBlad = new Error("Serwer zwrocil kod " + res.status); continue; }
+      var res = await fetch(p.url(url), { headers: { "Accept": "*/*" } });
+      if (!res.ok) { bledy.push("kod " + res.status); continue; }
+
+      if (p.typ === "r2j") {
+        var dane = await res.json();
+        if (dane && dane.status === "ok" && dane.items && dane.items.length) {
+          return { typ:"gotowe", wpisy: dane.items.map(function(it) {
+            return {
+              head: it.title || "",
+              link: it.link || "",
+              body: stripTags(it.description || it.content || ""),
+              date: it.pubDate || ""
+            };
+          }) };
+        }
+        bledy.push("brak wpisow");
+        continue;
+      }
+
+      if (p.typ === "json") {
+        var obj = await res.json();
+        if (obj && obj.contents && obj.contents.indexOf("<") !== -1) {
+          return { typ:"xml", tekst: obj.contents };
+        }
+        bledy.push("pusta odpowiedz");
+        continue;
+      }
+
       var tekst = await res.text();
-      if (tekst && tekst.indexOf("<") !== -1) return tekst;
-      ostatniBlad = new Error("Pusta odpowiedz.");
+      if (tekst && tekst.indexOf("<") !== -1) return { typ:"xml", tekst: tekst };
+      bledy.push("pusta odpowiedz");
     } catch (e) {
-      ostatniBlad = e;
+      bledy.push("brak polaczenia");
     }
   }
-  throw ostatniBlad || new Error("Nie udalo sie polaczyc z kanalem RSS.");
+  throw new Error("wszystkie proby zawiodly (" + bledy.join(", ") + ").");
 }
 
 document.getElementById("rss-load").addEventListener("click", async function() {
@@ -397,8 +428,8 @@ document.getElementById("rss-load").addEventListener("click", async function() {
   rssStatus("Pobieram wpisy...", "");
 
   try {
-    var xml = await pobierzFeed(url);
-    var wpisy = parseFeed(xml).slice(0, ile);
+    var wynik = await pobierzFeed(url);
+    var wpisy = (wynik.typ === "gotowe" ? wynik.wpisy : parseFeed(wynik.tekst)).slice(0, ile);
     if (!wpisy.length) throw new Error("Kanal nie zawiera zadnych wpisow.");
 
     var artykuly = wpisy.map(function(w) {
