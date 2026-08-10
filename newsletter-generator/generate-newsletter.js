@@ -18,7 +18,7 @@ const path = require('path');
 
 // Adres RSS Twojego bloga. Dla Bear Bloga zwykle wygląda tak:
 // https://NAZWATWOJEGOBLOGA.bearblog.dev/feed/
-const RSS_URL = 'https://ptaszarnia.bearblog.dev/feed/?type=rss';
+const RSS_URL = 'https://ptaszarnia.bearblog.dev/feed/';
 
 // Ile najnowszych wpisów ma się znaleźć w newsletterze
 const LICZBA_WPISOW = 3;
@@ -85,4 +85,37 @@ function extractTag(block, tag) {
   return match ? match[1] : '';
 }
 
-//
+// Usuwa znaczniki CDATA, tagi HTML i dekoduje podstawowe encje
+function cleanText(text) {
+  return text
+    .replace(/<!\[CDATA\[([\s\S]*?)\]\]>/, '$1')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .trim();
+}
+
+// Zamienia jeden wpis na fragment HTML wstawiany do szablonu
+function itemToHtml(item) {
+  const maxDlugosc = 220;
+  const skrot = item.description.length > maxDlugosc
+    ? item.description.slice(0, maxDlugosc).trim() + '…'
+    : item.description;
+
+  return `
+  <tr>
+    <td style="padding: 20px 0; border-bottom: 1px solid #ddd;">
+      <a href="${item.link}" style="font-size: 20px; font-weight: bold; color: #111111; text-decoration: none; font-family: Georgia, serif;">${item.title}</a>
+      <p style="margin: 8px 0 0; color: #444444; line-height: 1.5; font-family: Georgia, serif;">${skrot}</p>
+      <a href="${item.link}" style="font-size: 14px; color: #b33333; text-decoration: none;">Czytaj dalej →</a>
+    </td>
+  </tr>`;
+}
+
+main().catch((err) => {
+  console.error('BŁĄD:', err.message);
+  process.exit(1);
+});
