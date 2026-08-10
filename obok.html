@@ -54,6 +54,19 @@ input:focus,textarea:focus{outline:2px solid #1c1c1c;outline-offset:1px}
 .rm-btn{background:none;border:none;color:#ccc;cursor:pointer;font-size:1.2rem;line-height:1;padding:0 2px}.rm-btn:hover{color:#e53935}
 .add-btn{width:100%;padding:8px;border:2px dashed #ccc;background:none;border-radius:6px;color:#aaa;cursor:pointer;font-size:.82rem}.add-btn:hover{border-color:#888;color:#555}
 
+/* -- rss -- */
+.rss-row{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end}
+.rss-row .fld{flex:1 1 260px;margin-bottom:0}
+.rss-btn{padding:8px 14px;background:#1c1c1c;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:.82rem;font-weight:600;white-space:nowrap}
+.rss-btn:disabled{background:#aaa;cursor:wait}
+.rss-small{padding:7px 10px;background:#555;color:#fff;border:none;border-radius:5px;cursor:pointer;font-size:.78rem}
+.rss-opts{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:10px;font-size:.78rem;color:#666}
+.rss-opts input[type=number]{width:56px;padding:5px 7px;border:1px solid #ddd;border-radius:5px;background:#faf9f7}
+.rss-opts select{padding:5px 7px;border:1px solid #ddd;border-radius:5px;background:#faf9f7;font-size:.78rem}
+#rss-status{margin-top:10px;font-size:.8rem;line-height:1.5;min-height:1.2em}
+#rss-status.err{color:#c62828}
+#rss-status.ok{color:#2e7d32}
+
 /* -- html tab -- */
 #html-out{width:100%;height:260px;font-family:monospace;font-size:.74rem;padding:12px;border:1px solid #ddd;border-radius:6px;resize:vertical;background:#f8f7f4;color:#333}
 .note{font-size:.82rem;color:#666;margin-bottom:10px;line-height:1.6}
@@ -99,6 +112,30 @@ input:focus,textarea:focus{outline:2px solid #1c1c1c;outline-offset:1px}
 
 <!-- EDYTOR -->
 <div class="panel" id="panel-edytor">
+
+  <div class="card">
+    <div class="sec-h">Wczytaj z bloga (RSS)</div>
+    <div class="rss-row">
+      <div class="fld">
+        <label class="lbl">Adres kanalu RSS</label>
+        <input class="inp" id="rss-url" placeholder="https://twojblog.bearblog.dev/feed/?type=rss">
+      </div>
+      <button class="rss-btn" id="rss-load">Wczytaj wpisy</button>
+    </div>
+    <div class="rss-opts">
+      <label>Ile wpisow: <input type="number" id="rss-count" value="6" min="1" max="20"></label>
+      <label>Wstaw do:
+        <select id="rss-target">
+          <option value="split">obu kolumn (na przemian)</option>
+          <option value="0">kolumny lewej</option>
+          <option value="1">kolumny prawej</option>
+        </select>
+      </label>
+      <label><input type="checkbox" id="rss-replace" checked> zastap istniejace artykuly</label>
+    </div>
+    <div id="rss-status"></div>
+  </div>
+
   <div class="card">
     <div class="sec-h">Naglowek gazety</div>
     <div class="grid2">
@@ -140,6 +177,7 @@ input:focus,textarea:focus{outline:2px solid #1c1c1c;outline-offset:1px}
 
 <script>
 var SAVE_KEY = "gazeta_v3";
+var RSS_KEY  = "gazeta_rss_url";
 
 var DEFAULTS = {
   masthead: "PTASZARNIA",
@@ -252,6 +290,150 @@ function renderEditor() {
     });
   });
 }
+
+/* ---- RSS ---- */
+
+var RSS_PROXIES = [
+  function(u){ return "https://api.allorigins.win/raw?url=" + encodeURIComponent(u); },
+  function(u){ return "https://corsproxy.io/?" + encodeURIComponent(u); },
+  function(u){ return u; }
+];
+
+function rssStatus(msg, cls) {
+  var el = document.getElementById("rss-status");
+  el.textContent = msg;
+  el.className = cls || "";
+}
+
+function stripTags(s) {
+  var t = document.createElement("div");
+  t.innerHTML = String(s||"");
+  return (t.textContent || "").replace(/\s+/g," ").trim();
+}
+
+function skrocTekst(s, max) {
+  s = String(s||"");
+  if (s.length <= max) return s;
+  var ciety = s.slice(0, max);
+  var spacja = ciety.lastIndexOf(" ");
+  if (spacja > max * 0.6) ciety = ciety.slice(0, spacja);
+  return ciety.trim() + "\u2026";
+}
+
+function parseFeed(xmlText) {
+  var doc = new DOMParser().parseFromString(xmlText, "application/xml");
+  if (doc.querySelector("parsererror")) throw new Error("Nie udalo sie odczytac kanalu (bledny XML).");
+
+  var wpisy = [];
+  var nodes = doc.querySelectorAll("item");
+  if (nodes.length) {
+    nodes.forEach(function(n) {
+      wpisy.push({
+        head: stripTags(txt(n,"title")),
+        link: (txt(n,"link") || "").trim(),
+        body: stripTags(txt(n,"description") || txt(n,"encoded")),
+        date: txt(n,"pubDate")
+      });
+    });
+  } else {
+    doc.querySelectorAll("entry").forEach(function(n) {
+      var a = n.querySelector("link");
+      wpisy.push({
+        head: stripTags(txt(n,"title")),
+        link: a ? (a.getAttribute("href") || "").trim() : "",
+        body: stripTags(txt(n,"summary") || txt(n,"content")),
+        date: txt(n,"updated") || txt(n,"published")
+      });
+    });
+  }
+  return wpisy.filter(function(w){ return w.head; });
+
+  function txt(node, tag) {
+    var el = node.getElementsByTagName(tag)[0];
+    if (!el) {
+      var all = node.getElementsByTagName("*");
+      for (var i = 0; i < all.length; i++) {
+        if (all[i].localName === tag) { el = all[i]; break; }
+      }
+    }
+    return el ? el.textContent : "";
+  }
+}
+
+function dzialZDaty(dateStr) {
+  if (!dateStr) return "Z BLOGA";
+  var d = new Date(dateStr);
+  if (isNaN(d)) return "Z BLOGA";
+  return d.toLocaleDateString("pl-PL", {day:"numeric", month:"long"}).toUpperCase();
+}
+
+async function pobierzFeed(url) {
+  var ostatniBlad = null;
+  for (var i = 0; i < RSS_PROXIES.length; i++) {
+    try {
+      var res = await fetch(RSS_PROXIES[i](url));
+      if (!res.ok) { ostatniBlad = new Error("Serwer zwrocil kod " + res.status); continue; }
+      var tekst = await res.text();
+      if (tekst && tekst.indexOf("<") !== -1) return tekst;
+      ostatniBlad = new Error("Pusta odpowiedz.");
+    } catch (e) {
+      ostatniBlad = e;
+    }
+  }
+  throw ostatniBlad || new Error("Nie udalo sie polaczyc z kanalem RSS.");
+}
+
+document.getElementById("rss-load").addEventListener("click", async function() {
+  var btn = this;
+  var url = document.getElementById("rss-url").value.trim();
+  if (!url) { rssStatus("Wpisz adres kanalu RSS.", "err"); return; }
+  if (!/^https?:\/\//i.test(url)) url = "https://" + url;
+
+  var ile      = Math.max(1, Math.min(20, parseInt(document.getElementById("rss-count").value, 10) || 6));
+  var cel      = document.getElementById("rss-target").value;
+  var zastap   = document.getElementById("rss-replace").checked;
+
+  btn.disabled = true;
+  rssStatus("Pobieram wpisy...", "");
+
+  try {
+    var xml = await pobierzFeed(url);
+    var wpisy = parseFeed(xml).slice(0, ile);
+    if (!wpisy.length) throw new Error("Kanal nie zawiera zadnych wpisow.");
+
+    var artykuly = wpisy.map(function(w) {
+      return {
+        dzial: dzialZDaty(w.date),
+        head:  w.head,
+        body:  skrocTekst(w.body, 200),
+        link:  w.link
+      };
+    });
+
+    if (zastap) { S.cols[0] = []; S.cols[1] = []; }
+
+    if (cel === "split") {
+      artykuly.forEach(function(a, i){ S.cols[i % 2].push(a); });
+    } else {
+      var ci = parseInt(cel, 10);
+      artykuly.forEach(function(a){ S.cols[ci].push(a); });
+    }
+
+    if (!S.cols[0].length) S.cols[0].push({dzial:"DZIAL",head:"Nowy artykul",body:"",link:""});
+    if (!S.cols[1].length) S.cols[1].push({dzial:"DZIAL",head:"Nowy artykul",body:"",link:""});
+
+    try { localStorage.setItem(RSS_KEY, url); } catch(e) {}
+
+    renderEditor();
+    renderPreview();
+    save();
+    rssStatus("Wczytano " + artykuly.length + " wpisow. Mozesz je teraz swobodnie edytowac.", "ok");
+  } catch (err) {
+    rssStatus("Nie udalo sie: " + err.message + " Sprawdz, czy adres jest poprawny (dla Bear Bloga konczy sie na /feed/?type=rss).", "err");
+  } finally {
+    btn.disabled = false;
+  }
+});
 
 /* ---- HTML na strone ---- */
 
@@ -411,6 +593,13 @@ document.getElementById("reset-btn").addEventListener("click", function() {
 var hadSave = false;
 try { hadSave = !!localStorage.getItem(SAVE_KEY); } catch(e) {}
 if (hadSave) showInd("\u2714 Wczytano zapisany stan", "#1565c0");
+
+try {
+  var zapisanyRss = localStorage.getItem(RSS_KEY);
+  document.getElementById("rss-url").value = zapisanyRss || "https://ptaszarnia.bearblog.dev/feed/?type=rss";
+} catch(e) {
+  document.getElementById("rss-url").value = "https://ptaszarnia.bearblog.dev/feed/?type=rss";
+}
 
 renderEditor();
 renderPreview();
