@@ -135,6 +135,8 @@ input:focus,textarea:focus{outline:2px solid #1c1c1c;outline-offset:1px}
         </select>
       </label>
       <label><input type="checkbox" id="rss-replace" checked> zastap istniejace artykuly</label>
+      <label><input type="checkbox" id="rss-nocytat" checked> pomijaj cytat na poczatku</label>
+      <label>Dlugosc zajawki: <input type="number" id="rss-len" value="200" min="60" max="600" step="20"></label>
     </div>
     <div id="rss-status"></div>
   </div>
@@ -340,6 +342,109 @@ function stripTags(s) {
   return (t.textContent || "").replace(/\s+/g," ").trim();
 }
 
+/* Zamienia HTML opisu na czysta zajawke.
+   Gdy pomijajCytat = true, odcina cytat stojacy na poczatku wpisu:
+   - <blockquote> na starcie
+   - pierwszy akapit zlozony w calosci z kursywy (<em>/<i>)
+   - pierwszy akapit otwierajacy sie cudzyslowem */
+function zajawkaZHtml(html, pomijajCytat) {
+  var box = document.createElement("div");
+  box.innerHTML = String(html||"");
+
+  if (pomijajCytat) {
+    var proby = 0;
+    while (proby++ < 5) {
+      var el = pierwszyElement(box);
+      if (!el) break;
+      if (jestCytatem(el)) { el.remove(); continue; }
+      break;
+    }
+  }
+
+  var tekst = tekstZOdstepami(box);
+  if (pomijajCytat) {
+    tekst = obetnijCudzyslow(tekst);
+    if (!tekst) {
+      var caly = document.createElement("div");
+      caly.innerHTML = String(html||"");
+      tekst = tekstZOdstepami(caly);
+    }
+  }
+  return tekst;
+
+  function tekstZOdstepami(rodzic) {
+    var kopia = rodzic.cloneNode(true);
+    kopia.querySelectorAll("p, div, br, li, blockquote, h1, h2, h3, h4").forEach(function(el) {
+      el.insertAdjacentText("beforebegin", " ");
+    });
+    return (kopia.textContent || "").replace(/\s+/g," ").trim();
+  }
+
+  function pierwszyElement(rodzic) {
+    for (var i = 0; i < rodzic.childNodes.length; i++) {
+      var n = rodzic.childNodes[i];
+      if (n.nodeType === 1) return n;
+      if (n.nodeType === 3 && n.textContent.trim()) return null;
+    }
+    return null;
+  }
+
+  function jestCytatem(el) {
+    var tag = el.tagName.toLowerCase();
+    if (tag === "blockquote") return true;
+    var tresc = (el.textContent || "").trim();
+    if (!tresc) return true;
+    if (tag === "em" || tag === "i") return true;
+    if (tag === "p") {
+      var kursywa = el.querySelector("em, i");
+      if (kursywa && kursywa.textContent.trim().length >= tresc.length * 0.8) return true;
+      if (/^[\u201e\u201c\u00ab"'\u2014-]/.test(tresc)) return true;
+      if (tresc.length <= 400 && maPodpisAutora(tresc)) return true;
+    }
+    return false;
+  }
+
+  /* Czy akapit konczy sie podpisem zrodla? Np.:
+     "... - Ayn Rand, Atlas zbuntowany, 1957"
+     "... \u2014 Marzena Sekula"
+     "... A.C.Clarke \"Wyspy na niebie\"" */
+  function maPodpisAutora(t) {
+    var DUZA = "A-Z\u0104\u0106\u0118\u0141\u0143\u00d3\u015a\u017b\u0179";
+    var wzory = [
+      new RegExp("[\\u2014\\u2013-]\\s*[" + DUZA + "][^.!?]{2,80}$"),
+      new RegExp("[" + DUZA + "][\\wA-Za-z.\\u0105\\u0107\\u0119\\u0142\\u0144\\u00f3\\u015b\\u017c\\u017a]*(?:\\s+[" + DUZA + "][^\\s]*)*\\s*[\\u201e\\u201d\"][^\\u201d\"]{3,70}[\\u201d\"]\\s*$"),
+      new RegExp(",\\s*\\d{4}\\s*$")
+    ];
+    for (var i = 0; i < wzory.length; i++) if (wzory[i].test(t)) return true;
+    return false;
+  }
+
+  /* Odcina motto/cytat stojace na poczatku, gdy nie ma go w zadnym znaczniku.
+     Rozpoznaje podpis autora: mysnik + nazwisko, albo nazwisko + tytul + rok,
+     albo tytul w cudzyslowie. Tnie tylko w pierwszych ~400 znakach. */
+  function obetnijCudzyslow(t) {
+    var okno = t.slice(0, 420);
+
+    var wzory = [
+      /* ...tekst. \u2014 Autor Nazwisko  |  ...tekst - Autor, Tytul, 1957 */
+      /^[\s\S]{15,380}?[\s\u201d\u00bb"']*[\u2014\u2013-]\s*[A-Z\u0104\u0106\u0118\u0141\u0143\u00d3\u015a\u017b\u0179][^.!?]{2,70}?(?:,\s*[^.!?]{2,60}?)?(?:,\s*\d{4})?\s*(?=[A-Z\u0104\u0106\u0118\u0141\u0143\u00d3\u015a\u017b\u0179])/,
+      /* ...tekst. A.C.Clarke "Wyspy na niebie"  (autor + tytul w cudzyslowie) */
+      /^[\s\S]{15,380}?[A-Z\u0104\u0106\u0118\u0141\u0143\u00d3\u015a\u017b\u0179][\w.\u0105\u0107\u0119\u0142\u0144\u00f3\u015b\u017c\u017a]*(?:\s+[A-Z\u0104\u0106\u0118\u0141\u0143\u00d3\u015a\u017b\u0179][\w.\u0105\u0107\u0119\u0142\u0144\u00f3\u015b\u017c\u017a]*)*\s*[\u201e\u201d"][^\u201d"]{3,60}[\u201d"]\s*/,
+      /* "Cytat w cudzyslowie" + ewentualny podpis */
+      /^[\u201e\u201c\u00ab"][^\u201d\u201c\u00bb"]{10,}[\u201d\u00bb"]\s*(?:[\u2014\u2013-]\s*\S[^.]{0,60}\.?)?\s*/
+    ];
+
+    for (var i = 0; i < wzory.length; i++) {
+      var m = okno.match(wzory[i]);
+      if (m && m[0].length >= 20) {
+        var reszta = t.slice(m[0].length).trim();
+        if (reszta.length >= 40) return reszta;
+      }
+    }
+    return t;
+  }
+}
+
 function skrocTekst(s, max) {
   s = String(s||"");
   if (s.length <= max) return s;
@@ -360,7 +465,7 @@ function parseFeed(xmlText) {
       wpisy.push({
         head: stripTags(txt(n,"title")),
         link: (txt(n,"link") || "").trim(),
-        body: stripTags(txt(n,"description") || txt(n,"encoded")),
+        bodyHtml: txt(n,"description") || txt(n,"encoded"),
         date: txt(n,"pubDate")
       });
     });
@@ -370,7 +475,7 @@ function parseFeed(xmlText) {
       wpisy.push({
         head: stripTags(txt(n,"title")),
         link: a ? (a.getAttribute("href") || "").trim() : "",
-        body: stripTags(txt(n,"summary") || txt(n,"content")),
+        bodyHtml: txt(n,"summary") || txt(n,"content"),
         date: txt(n,"updated") || txt(n,"published")
       });
     });
@@ -411,7 +516,7 @@ async function pobierzFeed(url) {
             return {
               head: it.title || "",
               link: it.link || "",
-              body: stripTags(it.description || it.content || ""),
+              bodyHtml: it.description || it.content || "",
               date: it.pubDate || ""
             };
           }) };
@@ -447,7 +552,9 @@ document.getElementById("rss-load").addEventListener("click", async function() {
 
   var ile      = Math.max(1, Math.min(20, parseInt(document.getElementById("rss-count").value, 10) || 6));
   var cel      = document.getElementById("rss-target").value;
-  var zastap   = document.getElementById("rss-replace").checked;
+  var zastap     = document.getElementById("rss-replace").checked;
+  var bezCytatu  = document.getElementById("rss-nocytat").checked;
+  var dlZajawki  = Math.max(60, Math.min(600, parseInt(document.getElementById("rss-len").value, 10) || 200));
 
   btn.disabled = true;
   rssStatus("Pobieram wpisy...", "");
@@ -461,7 +568,7 @@ document.getElementById("rss-load").addEventListener("click", async function() {
       return {
         dzial: dzialZDaty(w.date),
         head:  w.head,
-        body:  skrocTekst(w.body, 200),
+        body:  skrocTekst(zajawkaZHtml(w.bodyHtml, bezCytatu), dlZajawki),
         link:  w.link
       };
     });
