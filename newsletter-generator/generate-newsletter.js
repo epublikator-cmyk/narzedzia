@@ -46,4 +46,43 @@ async function main() {
 
   const itemsHtml = items.map(itemToHtml).join('\n');
 
-  const template =
+  const template = fs.readFileSync(TEMPLATE_PATH, 'utf-8');
+  const dzisiaj = new Date().toLocaleDateString('pl-PL', { year: 'numeric', month: 'long', day: 'numeric' });
+
+  const finalHtml = template
+    .replace('{{WPISY}}', itemsHtml)
+    .replace('{{DATA}}', dzisiaj);
+
+  fs.mkdirSync(path.dirname(OUTPUT_PATH), { recursive: true });
+  fs.writeFileSync(OUTPUT_PATH, finalHtml, 'utf-8');
+
+  console.log(`Gotowe! Newsletter zapisany w: ${OUTPUT_PATH}`);
+  console.log(`Znalezione wpisy:`);
+  items.forEach((item) => console.log(` - ${item.title}`));
+}
+
+// Wyciąga pojedyncze wpisy (<item>...</item>) z surowego XML-a RSS
+function parseRssItems(xml) {
+  const items = [];
+  const itemBlocks = xml.split('<item>').slice(1);
+  for (const block of itemBlocks) {
+    const title = extractTag(block, 'title');
+    const link = extractTag(block, 'link');
+    const description = extractTag(block, 'description');
+    if (title && link) {
+      items.push({
+        title: cleanText(title),
+        link: link.trim(),
+        description: cleanText(description || ''),
+      });
+    }
+  }
+  return items;
+}
+
+function extractTag(block, tag) {
+  const match = block.match(new RegExp(`<${tag}>([\\s\\S]*?)<\\/${tag}>`));
+  return match ? match[1] : '';
+}
+
+//
