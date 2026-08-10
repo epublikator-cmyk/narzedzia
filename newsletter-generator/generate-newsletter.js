@@ -17,8 +17,8 @@ const path = require('path');
 // ====================================================
 
 // Adres RSS Twojego bloga. Dla Bear Bloga zwykle wygląda tak:
-// https://NAZWATWOJEGOBLOGA.bearblog.dev/feed/
-const RSS_URL = 'https://ptaszarnia.bearblog.dev/feed/';
+// https://ptaszarnia.bearblog.dev/feed/
+const RSS_URL = 'https://ptaszarnia.bearblog.dev/feed/?type=rss';
 
 // Ile najnowszych wpisów ma się znaleźć w newsletterze
 const LICZBA_WPISOW = 3;
