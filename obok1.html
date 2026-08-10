@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Generator Gazety</title>
+<title>Generator Gazety — wersja mailowa</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Playfair+Display:wght@700&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box}
@@ -87,7 +87,7 @@ input:focus,textarea:focus{outline:2px solid #1c1c1c;outline-offset:1px}
 <body>
 
 <div id="topbar">
-  <h1 id="app-title">Generator gazety <span id="save-ind"></span></h1>
+  <h1 id="app-title">Generator gazety (mail) <span id="save-ind"></span></h1>
   <div class="bar-right">
     <div class="tabs">
       <button class="tab-btn active" data-tab="podglad">Podglad</button>
@@ -190,7 +190,7 @@ input:focus,textarea:focus{outline:2px solid #1c1c1c;outline-offset:1px}
 </div>
 
 <script>
-var SAVE_KEY = "gazeta_v3";
+var SAVE_KEY = "gazeta_v3_mail";
 var RSS_KEY  = "gazeta_rss_url";
 
 var DEFAULTS = {
@@ -671,40 +671,46 @@ function buildWebHTML() {
 /* ---- HTML do emaila ---- */
 
 function buildEmailHTML() {
-  function artRow(art) {
-    return '<tr><td style="padding:0 0 12px;font-family:Georgia,serif">'+
-      '<p style="margin:0 0 3px;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#888">'+esc(art.dzial)+'</p>'+
-      '<h2 style="margin:0 0 5px;font-size:16px;font-weight:700;line-height:1.2;color:#1c1c1c">'+esc(art.head)+'</h2>'+
-      '<p style="margin:0;font-size:13px;line-height:1.6;color:#333">'+esc(art.body)+'</p>'+
-      (art.link ? '<p style="margin:5px 0 0"><a href="'+esc(art.link)+'" style="font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#666;text-decoration:none;border-bottom:1px solid #999">'+esc(art.linktxt||"Czytaj dalej")+'</a></p>' : '')+
+  /* Wersja mailowa jest jednokolumnowa: uklad dwukolumnowy rozjezdza sie
+     na telefonach, bo poczta nie obsluguje zawijania kolumn.
+     Artykuly z obu kolumn splatamy na przemian, zeby zachowac kolejnosc. */
+  function artBlok(art) {
+    return '<tr><td style="padding:0 0 14px;font-family:Georgia,serif">'+
+      '<p style="margin:0 0 4px;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#888">'+esc(art.dzial)+'</p>'+
+      '<h2 style="margin:0 0 6px;font-size:19px;font-weight:700;line-height:1.25;color:#1c1c1c">'+esc(art.head)+'</h2>'+
+      '<p style="margin:0;font-size:15px;line-height:1.6;color:#333">'+esc(art.body)+'</p>'+
+      (art.link ? '<p style="margin:6px 0 0"><a href="'+esc(art.link)+'" style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:#666;text-decoration:none;border-bottom:1px solid #999">'+esc(art.linktxt||"Czytaj dalej")+'</a></p>' : '')+
     '</td></tr>'+
-    '<tr><td style="padding:0 0 12px"><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="border-top:1px solid #ccc;font-size:0;line-height:0">&nbsp;</td></tr></table></td></tr>';
+    '<tr><td style="padding:0 0 14px"><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="border-top:1px solid #ccc;font-size:0;line-height:0">&nbsp;</td></tr></table></td></tr>';
   }
-  var c0 = S.cols[0].map(artRow).join('');
-  var c1 = S.cols[1].map(artRow).join('');
+
+  var razem = [];
+  var maxLen = Math.max(S.cols[0].length, S.cols[1].length);
+  for (var k = 0; k < maxLen; k++) {
+    if (S.cols[0][k]) razem.push(S.cols[0][k]);
+    if (S.cols[1][k]) razem.push(S.cols[1][k]);
+  }
+  var artykuly = razem.map(artBlok).join('');
+
   return '<!DOCTYPE html>\n<html>\n<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>\n<body style="margin:0;padding:0;background:#f0ece4">\n'+
-'<table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f0ece4"><tr><td align="center" style="padding:20px 10px">\n'+
-'<table width="640" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:640px;background:#f4efe0;border:1px solid #ccc">\n'+
-'<tr><td align="center" style="padding:24px 28px 6px">\n'+
-  '<p style="margin:0;font-family:Georgia,serif;font-size:32px;font-weight:700;letter-spacing:3px;color:#1c1c1c;line-height:1.1">'+esc(S.masthead)+'</p>\n'+
-  '<p style="margin:8px 0 0;font-family:Georgia,serif;font-style:italic;font-size:12px;color:#555">'+esc(S.motto)+'</p>\n'+
+'<table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f0ece4"><tr><td align="center" style="padding:20px 8px">\n'+
+'<table width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;background:#f4efe0;border:1px solid #ccc">\n'+
+'<tr><td align="center" style="padding:26px 24px 8px">\n'+
+  '<p style="margin:0;font-family:Georgia,serif;font-size:30px;font-weight:700;letter-spacing:2px;color:#1c1c1c;line-height:1.15">'+esc(S.masthead)+'</p>\n'+
+  '<p style="margin:8px 0 0;font-family:Georgia,serif;font-style:italic;font-size:13px;color:#555">'+esc(S.motto)+'</p>\n'+
 '</td></tr>\n'+
-'<tr><td style="padding:0 28px">\n'+
+'<tr><td style="padding:0 24px">\n'+
   '<table width="100%" cellpadding="0" cellspacing="0" border="0"><tr>\n'+
-    '<td style="border-top:3px solid #1c1c1c;border-bottom:1px solid #1c1c1c;padding:4px 0;font-family:Georgia,serif;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#1c1c1c">'+esc(S.date)+'</td>\n'+
-    '<td align="right" style="border-top:3px solid #1c1c1c;border-bottom:1px solid #1c1c1c;padding:4px 0;font-family:Georgia,serif;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#1c1c1c">'+esc(S.edition)+'</td>\n'+
+    '<td style="border-top:3px solid #1c1c1c;border-bottom:1px solid #1c1c1c;padding:5px 0;font-family:Georgia,serif;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#1c1c1c">'+esc(S.date)+'</td>\n'+
+    '<td align="right" style="border-top:3px solid #1c1c1c;border-bottom:1px solid #1c1c1c;padding:5px 0;font-family:Georgia,serif;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#1c1c1c">'+esc(S.edition)+'</td>\n'+
   '</tr></table>\n'+
 '</td></tr>\n'+
-'<tr><td style="padding:16px 28px 24px">\n'+
-  '<table width="100%" cellpadding="0" cellspacing="0" border="0"><tr valign="top">\n'+
-    '<td width="48%" style="padding-right:12px;border-right:1px solid #aaa"><table width="100%" cellpadding="0" cellspacing="0" border="0">'+c0+'</table></td>\n'+
-    '<td width="4%" style="font-size:0;line-height:0">&nbsp;</td>\n'+
-    '<td width="48%" style="padding-left:12px"><table width="100%" cellpadding="0" cellspacing="0" border="0">'+c1+'</table></td>\n'+
-  '</tr></table>\n'+
+'<tr><td style="padding:18px 24px 6px">\n'+
+  '<table width="100%" cellpadding="0" cellspacing="0" border="0">'+artykuly+'</table>\n'+
 '</td></tr>\n'+
 (S.stopka || S.stopkaLink ?
-'<tr><td align="center" style="padding:0 28px 24px">'+
-  '<table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td align="center" style="border-top:1px solid #1c1c1c;padding:12px 0 0;font-family:Georgia,serif;font-size:11px;line-height:1.6;color:#777">'+
+'<tr><td align="center" style="padding:0 24px 24px">'+
+  '<table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td align="center" style="border-top:1px solid #1c1c1c;padding:14px 0 0;font-family:Georgia,serif;font-size:12px;line-height:1.6;color:#777">'+
     esc(S.stopka||"")+
     (S.stopkaLink ? '<br><a href="'+esc(S.stopkaLink)+'" style="color:#666;text-decoration:none;border-bottom:1px solid #999">'+esc(S.stopkaLinkTxt||"Wypisz sie")+'</a>' : '')+
   '</td></tr></table>'+
